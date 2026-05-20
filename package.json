@@ -1,0 +1,21 @@
+{
+  "name": "aula7_funcao",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node dist/app.js",
+    "build": "npx tsc",
+    "dev": "ts-node src/app.ts"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "@types/express": "^5.0.6",
+    "@types/node": "^25.4.0",
+    "express": "^5.2.1",
+    "typescript": "^5.9.3"
+  }
+}
