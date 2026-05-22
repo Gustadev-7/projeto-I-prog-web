@@ -1,4 +1,4 @@
-export class Ciente{
+export class Cliente{
     id_cliente: Number;
     nome: string;
     CPF: string;
