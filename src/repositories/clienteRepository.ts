@@ -26,14 +26,14 @@ export class ClienteRepository{
         return this.clientetList.find(clientes => clientes.id_cliente === id_cliente);
     }
 
+        //filtrando por CPF 
+    filtraClientePorCPF(CPF: string): Cliente | undefined{
+        return this.clientetList.find(clientes => clientes.CPF === CPF);
+    }
+
     //filtrando todos os clientes 
     filtarTodosClientes(): Cliente []{
         return this.clientetList;
-    }
-
-    //filtrando por nome 
-    filtraClientePorNome(nome: string): Cliente | undefined{
-        return this.clientetList.find(clientes => clientes.nome.toLocaleLowerCase() === nome.toLocaleLowerCase());
     }
 
     //atualizando cliente por id, atualização parcial dos dados 
@@ -45,7 +45,8 @@ export class ClienteRepository{
         Object.assign(cliente, dados);
         return cliente; 
     }
-
+ 
+    //Deletando cliente
     deletaCliente(id_cliente: Number): Cliente | undefined{
         const clienteIndex = this.clientetList.findIndex(clientes => clientes.id_cliente === id_cliente);
         if(clienteIndex === -1) return undefined;
