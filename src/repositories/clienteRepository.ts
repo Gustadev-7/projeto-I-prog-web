@@ -1,7 +1,9 @@
-
 import {Cliente} from "../models/Cliente";
 
 export class ClienteRepository{
+
+    //criando instancia para não haver duplicidade de dados, garante apenas um repositório de clientes
+
     private static instance: ClienteRepository; 
     private clientetList: Cliente [] = [];
     
@@ -14,11 +16,46 @@ export class ClienteRepository{
         return this.instance
     }
 
+    //inserindo cliente no array de clientes
     insereCliente(clientes: Cliente){
         this.clientetList.push(clientes)
     }
 
+    //filtrando por id
     filtraClientePorId(id_cliente: Number): Cliente | undefined{
         return this.clientetList.find(clientes => clientes.id_cliente === id_cliente);
-    }   
+    }
+
+    //filtrando todos os clientes 
+    filtarTodosClientes(): Cliente []{
+        return this.clientetList;
+    }
+
+    //filtrando por nome 
+    filtraClientePorNome(nome: string): Cliente | undefined{
+        return this.clientetList.find(clientes => clientes.nome.toLocaleLowerCase() === nome.toLocaleLowerCase());
+    }
+
+    //atualizando cliente por id, atualização parcial dos dados 
+    atualizaCliente(id_cliente: Number, dados: Partial<Cliente>): Cliente | undefined{
+        const cliente = this.clientetList.find(clientes => clientes.id_cliente === id_cliente);
+
+        if(!cliente) return undefined;
+
+        Object.assign(cliente, dados);
+        return cliente; 
+    }
+
+    deletaCliente(id_cliente: Number): Cliente | undefined{
+        const clienteIndex = this.clientetList.findIndex(clientes => clientes.id_cliente === id_cliente);
+        if(clienteIndex === -1) return undefined;
+
+        const clienteDeletado = this.clientetList[clienteIndex]; // guardando o cliente deletado para retornar depois
+
+        this.clientetList.splice(clienteIndex, 1); 
+
+        return clienteDeletado; 
+        
+    }
+
 }
