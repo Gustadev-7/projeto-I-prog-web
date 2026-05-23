@@ -1,4 +1,4 @@
-import { ClientRequest } from "node:http";
+
 import {Cliente} from "../models/Cliente";
 
 export class ClienteRepository{
@@ -20,5 +20,5 @@ export class ClienteRepository{
 
     filtraClientePorId(id_cliente: Number): Cliente | undefined{
         return this.clientetList.find(clientes => clientes.id_cliente === id_cliente);
-    }
+    }   
 }
