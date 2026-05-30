@@ -40,4 +40,39 @@ export function buscarCliente(req: Request, res:Response){
 }
 }
 
-//
+//PUT - Atualizar cliente por id 
+export function atualizarCliente(req: Request, res: Response): void{
+    try{
+        //*req.params recebe o id da URL converte para number
+        const id_cliente = Number(req.params.id_cliente); 
+
+        //re.body dados novos da requisição para atualizar o cliente
+        const cliente = clienteService.atualizarCliente(id_cliente, req.body); 
+
+        res.status(200).json({message: "Cliente atualizado com sucesso!", cliente});
+    }catch(e: unknown){
+        res.status(400).json({
+            message:(e as Error).message
+        })
+    }
+}
+
+//DELETE - Deletar cliente por id 
+export function deletarCliente(req: Request, res: Response): void {
+    try{
+        //dados recebidos da requisição
+        const id_cliente = Number(req.params.id_cliente);
+
+        //chama service para deletar o cliente
+        clienteService.deletarCliente(id_cliente);
+
+        //deu certo, retorna status 200 e mensagem de sucesso
+        res.status(200).json({
+            message: "Cliente deletado com sucesso!"
+        })
+    }catch (e: unknown){
+        res.status(400).json({
+            message: (e as Error).message
+        })
+    }
+}
