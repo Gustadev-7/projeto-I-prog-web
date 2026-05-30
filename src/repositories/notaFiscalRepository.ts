@@ -1,0 +1,66 @@
+import {NotaFiscal} from '../models/NotaFiscal';
+
+export class NotaFiscalRepository {
+    private static isntance: NotaFiscalRepository;
+    private notasFiscais: NotaFiscal[] = [];
+
+    private constructor() {}
+
+    public static getInstance(): NotaFiscalRepository {
+        if (!this.isntance){ 
+            this.isntance = new NotaFiscalRepository();
+        }
+        return this.isntance;
+    }
+
+    //cadastrando nota fiscal
+    insereNotaFiscal(nota: NotaFiscal): void {
+        this.notasFiscais.push(nota);
+    }
+
+    //filtrar por id 
+    filtrarNotaPorId(id_nota: number): NotaFiscal | undefined {
+        return this.notasFiscais.find(nota => nota.id_nota === id_nota);
+    }
+
+    //filtrar todas 
+    filtrarTodasNotas():NotaFiscal[] {
+        return this.notasFiscais;
+    }
+
+    //filtrar nota por cliente, assim chamamos o id do cliente para ver se ele esta associado a alguma 
+    filtrarNotasCliente(id_cliente: number): NotaFiscal []{
+        return this.notasFiscais.filter(nota => nota.id_cliente.id_cliente === id_cliente);
+    }
+    
+    //filtrar nota por vendedor (mesma coisa acima)
+    filtrarNotasVendedor(id_vendedor: number): NotaFiscal [] {
+        return this.notasFiscais.filter(nota => nota.id_vendedor.id_vendedor === id_vendedor);
+    }
+
+    //filtrar nota por carro (mesma coisa acima)
+    filtrarNotasCarro(id_carro: number): NotaFiscal [] {
+        return this.notasFiscais.filter(nota => nota.id_carro.id_carro === id_carro);
+    }
+    
+
+    //atualizar nota fiscal por id 
+    atualizarNotaFiscal(id_nota: number, dados: Partial<NotaFiscal>): NotaFiscal | undefined {
+        const nota = this.notasFiscais.find(nota => nota.id_nota === id_nota);
+
+        if (!nota) return undefined;
+
+        Object.assign(nota, dados); // Atualiza apenas as propriedades que foram enviadas na requisição
+        return nota 
+    }
+
+    //deletar nota fiscal 
+    deletarNotaFiscal(id_nota: number): NotaFiscal | undefined {
+        const notaIndex = this.notasFiscais.findIndex(nota => id_nota === id_nota);
+        if (notaIndex === -1) return undefined;
+
+        const notaDeletada = this.notasFiscais[notaIndex]; //guardando a nota fiscal deletada para retornar depois 
+
+        this.notasFiscais.splice(notaIndex, 1); // Apagando a nota fiscal 
+    }
+}
