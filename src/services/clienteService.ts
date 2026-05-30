@@ -1,9 +1,11 @@
 import { ClienteRepository } from "../repositories/clienteRepository";
+import { NotaFiscalRepository } from "../repositories/notaFiscalRepository";
 import { Cliente } from "../models/Cliente";
 
 export class ClienteService {
 
     ClienteRepository: ClienteRepository = ClienteRepository.getInstance();
+    NotaFiscalRepository: NotaFiscalRepository = NotaFiscalRepository.getInstance();
 
     //Criando cliente 
     cadastrarCliente(dados: any): Cliente {
@@ -68,4 +70,20 @@ export class ClienteService {
         }
         return clienteAtualizado;
     }
+
+    //Deletar cliente se não tiver nota fiscal associada
+    deletarCliente(id_cliente: number): void {
+        const notas = this.NotaFiscalRepository.filtrarNotasCliente(id_cliente);
+
+        //verifica o tamanho do array que filtrar notas cliente retornou, se tiver pelo menos 1 não pode deletar
+        if(notas.length > 0){
+            throw new Error("Cliente possui notas fiscais associadas, não é possivel deletar");
+        }
+
+        const clienteDeletado = this.ClienteRepository.deletaCliente(id_cliente); //deleta
+
+        if(!clienteDeletado){
+            throw new Error("Cliente não encontrado!");
+    }
+}
 }
