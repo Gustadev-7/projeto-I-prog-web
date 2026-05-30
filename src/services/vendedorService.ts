@@ -47,6 +47,11 @@ export class VendedorService{
             return vendedor;
         }
 
+        //listar vendedores
+        listarVendedores(): Vendedor[] {
+            return this.vendedorRepository.listarVendedores();
+        }
+
         //atualizar vendedor
         atualizarVendedor(id_vendedor: number, dados: any): Vendedor {
             if(dados.matricula){
