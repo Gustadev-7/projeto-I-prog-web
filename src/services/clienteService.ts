@@ -51,6 +51,10 @@ export class ClienteService {
         return cliente;
     }
     
+    listarClientes(): Cliente[]{
+        return this.ClienteRepository.listarTodosClientes();
+    }
+
     //Atualizar cliente 
     atualizarCliente(id_cliente: number, dados: any): Cliente {
 

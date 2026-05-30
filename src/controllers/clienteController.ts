@@ -40,6 +40,20 @@ export function buscarCliente(req: Request, res:Response){
 }
 }
 
+//GET - Listar todos os clientes
+export function listarClientes(req: Request, res: Response){
+    try{
+        //listando os clientes usando service 
+        const clientes = clienteService.listarClientes();
+
+        //deu certo
+        res.status(200).json(clientes);
+    }catch(e: unknown){ 
+        //em caso de erro
+        res.status(400).json({message:(e as Error).message})
+    }
+}
+
 //PUT - Atualizar cliente por id 
 export function atualizarCliente(req: Request, res: Response): void{
     try{
