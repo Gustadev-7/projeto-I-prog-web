@@ -31,8 +31,8 @@ export class estoqueRepository{
     }
 
     //filtrar estoque por id do carro, retorna o estoque relacionado a um carro específico
-    listarEstoquePorCarro(id_carro: Number): Estoque[] {
-        return this.estoqueList.filter(estoque => estoque.id_carro === id_carro);
+    filtraEstoquePorCarro(id_carro: Number): Estoque | undefined{
+        return this.estoqueList.find(estoque => estoque.id_carro === id_carro);
     }
 
     //atualizar estoque por id

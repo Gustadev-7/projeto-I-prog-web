@@ -28,6 +28,12 @@ export class vendedorRepository{
     filtraVendedorPorId(id_vendedor: Number): Vendedor | undefined{
         return this.vendedorList.find(vendedor => vendedor.id_vendedor === id_vendedor);
     }
+
+    buscarPorMatricula(matricula: string): Vendedor | undefined {
+    return this.vendedorList.find(
+        vendedor => vendedor.matricula === matricula
+    );
+    }
     
     //atualizar vendedor por id
     atualizarVendedor(id_vendedor: Number, dados: Partial<Vendedor>): Vendedor | undefined {
