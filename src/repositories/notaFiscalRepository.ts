@@ -23,11 +23,18 @@ export class NotaFiscalRepository {
         return this.notasFiscais.find(nota => nota.id_nota === id_nota);
     }
 
+    //filtrar por numero da nota
+    filtrarNotaPorNumero(numero_nota: string): NotaFiscal | undefined {
+        return this.notasFiscais.find(nota => nota.numero_nota === numero_nota);
+    }
+
     //filtrar todas 
     filtrarTodasNotas():NotaFiscal[] {
         return this.notasFiscais;
     }
 
+    //* O filter vai buscar por varios registros, um cliente pode ter mais de uma nota no sistema 
+    
     //filtrar nota por cliente, assim chamamos o id do cliente para ver se ele esta associado a alguma 
     filtrarNotasCliente(id_cliente: number): NotaFiscal []{
         return this.notasFiscais.filter(nota => nota.id_cliente.id_cliente === id_cliente);

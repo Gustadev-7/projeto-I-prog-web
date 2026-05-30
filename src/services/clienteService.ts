@@ -16,7 +16,7 @@ export class ClienteService {
         }
 
         //Clientes com o mesmo CPF não podem ser cadastrados
-        if(this.ClienteRepository.filtraClientePorCPF(dados.CPF)){
+        if(this.ClienteRepository.listarClientePorCPF(dados.CPF)){
             throw new Error("CPF já cadastrado");
         }
 
@@ -42,7 +42,7 @@ export class ClienteService {
         }
 
         //Busca por ternário, como se fosse if (se não achar por id, busca por CPF)
-        const cliente = id_cliente ? this.ClienteRepository.filtraClientePorId(id_cliente) : this.ClienteRepository.filtraClientePorCPF(CPF!);
+        const cliente = id_cliente ? this.ClienteRepository.listarClientePorId(id_cliente) : this.ClienteRepository.listarClientePorCPF(CPF!);
 
         if(!cliente){
             throw new Error("Cliente não encontrado");
@@ -56,7 +56,7 @@ export class ClienteService {
 
         //verifica se a atualização do CPF é um CPF que já temos 
         if(dados.CPF){
-            const clienteExistente = this.ClienteRepository.filtraClientePorCPF(dados.CPF);
+            const clienteExistente = this.ClienteRepository.listarClientePorCPF(dados.CPF);
         
             //se o cpf já existir e for diferente do cliente que estamos atualizando
             if(clienteExistente && clienteExistente.id_cliente !== id_cliente){

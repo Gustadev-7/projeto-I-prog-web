@@ -1,10 +1,10 @@
 //vendedorService
-import { vendedorRepository } from "../repositories/vendedorRepository";
+import { VendedorRepository } from "../repositories/vendedorRepository";
 import { Vendedor } from "../models/Vendedor";
 import { NotaFiscalRepository } from "../repositories/notaFiscalRepository";
 
-export class vendedorService{
-    vendedorRepository: vendedorRepository = vendedorRepository.getInstance();
+export class VendedorService{
+    vendedorRepository: VendedorRepository = VendedorRepository.getInstance();
     notaFiscalRepository: NotaFiscalRepository = NotaFiscalRepository.getInstance();
 
     cadastrarVendedor(dados: any): Vendedor {

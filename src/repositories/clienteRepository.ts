@@ -22,17 +22,17 @@ export class ClienteRepository{
     }
 
     //filtrando por id
-    filtraClientePorId(id_cliente: Number): Cliente | undefined{
+    listarClientePorId(id_cliente: Number): Cliente | undefined{
         return this.clientetList.find(clientes => clientes.id_cliente === id_cliente);
     }
 
-        //filtrando por CPF 
-    filtraClientePorCPF(CPF: string): Cliente | undefined{
+    //filtrando por CPF 
+    listarClientePorCPF(CPF: string): Cliente | undefined{
         return this.clientetList.find(clientes => clientes.CPF === CPF);
     }
 
     //filtrando todos os clientes 
-    filtarTodosClientes(): Cliente []{
+    listarTodosClientes(): Cliente []{
         return this.clientetList;
     }
 

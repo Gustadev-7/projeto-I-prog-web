@@ -1,15 +1,15 @@
 import { Vendedor } from "../models/Vendedor"
 
-export class vendedorRepository{
-    private static instance: vendedorRepository;
+export class VendedorRepository{
+    private static instance: VendedorRepository;
     private vendedorList: Vendedor[] = [];
 
     private constructor () {}
 
     //singleton para garantir que haja apenas uma instancia do repositório
-    public static getInstance(): vendedorRepository{
+    public static getInstance(): VendedorRepository{
         if(!this.instance){
-            this.instance = new vendedorRepository();
+            this.instance = new VendedorRepository();
         }
         return this.instance;
     }

@@ -1,16 +1,16 @@
 //Repositório Estoque
 import { Estoque } from "../models/Estoque"
 
-export class estoqueRepository{
-    private static instance: estoqueRepository
+export class EstoqueRepository{
+    private static instance: EstoqueRepository
     private estoqueList: Estoque[] = [];
 
     private constructor () {}
 
     //singleton para garantir que haja apenas uma instancia do repositório
-    public static getInstance(): estoqueRepository{
+    public static getInstance(): EstoqueRepository{
         if(!this.instance){
-            this.instance = new estoqueRepository();
+            this.instance = new EstoqueRepository();
         }
         return this.instance;
     }
