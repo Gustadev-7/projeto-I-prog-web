@@ -74,7 +74,7 @@ export function atualizarCliente(req: Request, res: Response): void{
 //DELETE - Deletar cliente por id 
 export function deletarCliente(req: Request, res: Response): void {
     try{
-        //dados recebidos da requisição
+        //dados recebidos da requisição e converte para number 
         const id_cliente = Number(req.params.id_cliente);
 
         //chama service para deletar o cliente
