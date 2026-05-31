@@ -15,7 +15,7 @@ const PORT = process.env.PORT ?? 3000;
 app.use(express.json());
 
 function logInfo () {
-console . log (`API em execucao no URL : http : localhost : $ { PORT }`) ;
+console . log (`API em execucao no URL: http://localhost: ${PORT}`) ;
 }//exibe a mensagem no terminal quando o servidor subir 
 
 //Rotas para Carro
