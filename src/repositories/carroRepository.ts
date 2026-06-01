@@ -1,4 +1,6 @@
 import { Carro } from "../models/Carro";
+import { EstoqueRepository } from "./estoqueRepository";
+import { NotaFiscalRepository } from "./notaFiscalRepository";
 
 // Cria a classe do Repositorio para o Carro
 export class CarroRepository {
@@ -44,13 +46,28 @@ export class CarroRepository {
     }
 
     // Função para deletar o carro com id fornecido pelo usuário
-    deletarCarro(id: number): Carro | undefined {
-        const carro = this.carroLista.findIndex(carro => carro.id_carro === id);
-        if(carro === -1) return undefined;
+    deletarCarro(id: number): Carro | string | undefined {
+        const estoqueRepository = EstoqueRepository.getInstance(); // Cria uma instância do repositório de estoque 
+        const notaFiscalRepository = NotaFiscalRepository.getInstance(); // Cria uma instância do repositório de nota fiscal
 
-        const carroDeletado = this.carroLista[carro]; // Guarda uma cópia do carro antes de removê-lo para poder retornar no final
+        const carroEmEstoque = estoqueRepository.filtraEstoquePorCarro(id); // Verifica se o carro está presente no estoque
+        // Se o carro estiver presente no estoque e a quantidade for maior que 0
+        if (carroEmEstoque && carroEmEstoque.quantidade > 0) {
+            return "Não é possível excluir o carro, pois ele possui estoque."; // Retorna uma mensagem informando que o carro não pode ser excluído
+        }
 
-        this.carroLista.splice(carro, 1);
+        const carroEmNotaFiscal = notaFiscalRepository.filtrarNotasCarro(id); // Verifica se o carro está presente em alguma nota fiscal
+        // Se o carro estiver presente em alguma nota fiscal
+        if (carroEmNotaFiscal.length > 0) {
+            return "Não é possível excluir o carro, pois ele está associado a uma ou mais notas fiscais."; // Retorna uma mensagem informando que o carro não pode ser excluído
+        }
+
+        const carroIndex = this.carroLista.findIndex(carro => carro.id_carro === id); // Encontra o índice do carro na lista de carros
+        if(carroIndex === -1) return undefined; // Se o carro não for encontrado, retorna undefined
+
+        const carroDeletado = this.carroLista[carroIndex]; // Guarda uma cópia do carro antes de removê-lo para poder retornar no final
+
+        this.carroLista.splice(carroIndex, 1); // Remove o carro da lista de carros usando o índice encontrado
 
         return carroDeletado;
     }
