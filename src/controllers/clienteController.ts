@@ -24,20 +24,29 @@ export function cadastrarCliente(req: Request, res:Response){
 }
 }
 
-// GET - Buscar cliente por id ou CPF 
-export function buscarCliente(req: Request, res:Response){
+// GET - Buscar cliente por id
+export function buscarCliente(req: Request, res: Response){
     try{
-        //extrai o id_cliente e CPF da query da requisição
-        const{id_cliente, CPF} = req.query as {id_cliente?: string, CPF?: string};
-        
+        //dados recebidos da requisição e converte para number
+        const id_cliente = Number(req.params.id);
+
+        //chama o service para buscar o cliente usando o id recebido da requisição
         const cliente = clienteService.buscarCliente(
-            id_cliente ? Number(id_cliente): undefined, //converto para number se id_cliente existir
-            CPF 
-        )
-        res.status(200).json({ message: "Cliente encontrado com sucesso!", cliente})
+            id_cliente,
+            undefined
+        );
+
+        //deu certo, retorna status 200 e o cliente encontrado
+        res.status(200).json({
+            message: "Cliente encontrado com sucesso!",
+            cliente
+        });
+
     }catch(e: unknown){
-        res.status(400).json({message:(e as Error).message})
-}
+        res.status(400).json({
+            message:(e as Error).message
+        });
+    }
 }
 
 //GET - Listar todos os clientes
