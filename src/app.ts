@@ -18,36 +18,44 @@ function logInfo () {
 console . log (`API em execucao no URL: http://localhost: ${PORT}`) ;
 }//exibe a mensagem no terminal quando o servidor subir 
 
-//Rotas para Carro
-app.post("/api/carro", cadastrarCarro);
-app.get("/api/carros", listarCarros);
-app.get("/api/carro/:id", buscarCarroPorId);
-app.put("/api/carro/:id", atualizarCarro);
-app.delete("/api/carro/:id", deletarCarro);
 
 //Rotas para Cliente 
-app.post("/api/cliente", cadastrarCliente);
-app.get("/api/cliente", buscarCliente);
-app.get("/api/clientes", listarClientes);
-app.put("/api/cliente/:id_cliente", atualizarCliente);
-app.delete("/api/cliente/:id_cliente", deletarCliente);
-
-//rotas para Estoque
-app.post("/api/estoque", cadastrarEstoque);
-app.get("/api/estoque/:id_estoque", buscarEstoque);
-app.delete("/api/estoque/:id_estoque", deletarEstoque);
-
-//rotas para Nota Fiscal 
-app.post("/api/nota", emitirNota);
-app.get("/api/notas/cliente", listarNotasPorCliente);
-app.get("/api/notas/vendedor", listarNotasPorVendedor);
-app.delete("/api/estoque/:id_nota", deletarNota);
+app.get("/clientes", listarClientes);
+app.get("/clientes/notas/:id", listarNotasPorCliente);
+app.get("/clientes/:id", buscarCliente);
+app.post("/clientes", cadastrarCliente);
+app.put("/clientes/:id_cliente", atualizarCliente);
+app.delete("/clientes/:id_cliente", deletarCliente);
 
 //rotas para Vendedor
-app.post("/api/vendedor", cadastrarVendedor);
-app.get("/api/vendedores", listarVendedores);
-app.get("/api/vendedor/:id_vendedor", buscarVendedor);
-app.put("/api/vendedor/:id_vendedor", atualizarVendedor);
-app.delete("/api/vendedor/:id_vendedor", deletarVendedor);
+app.get("/vendedores", listarVendedores);
+app.get("/vendedores/notas/:id", listarNotasPorVendedor);
+app.get("/vendedores/:id_vendedor", buscarVendedor);
+app.post("/vendedores", cadastrarVendedor);
+app.put("/vendedores/:id_vendedor", atualizarVendedor);
+app.delete("/vendedores/:id_vendedor", deletarVendedor);
+
+//Rotas para Carro
+app.get("/carros", listarCarros);
+//app.get("/carros/disponiveis", listarCarrosDisponiveis);
+app.get("/carros/:id", buscarCarroPorId);
+app.post("/carros", cadastrarCarro);
+app.put("/carros/:id", atualizarCarro);
+app.delete("/carros/:id", deletarCarro);
+
+//rotas para Estoque
+//app.get("/estoque",listarEstoque);
+//app.post("/estoque/carro/:id_carro", buscarEstoquePorCarro);
+app.get("/estoque/:id_estoque", buscarEstoque);
+app.post("/estoque", cadastrarEstoque);
+//app.put("/estoque/:id", atualizarEstoque);
+app.delete("/estoque/:id_estoque", deletarEstoque);
+
+//rotas para Nota Fiscal 
+//app.get("/notas", listarNotas);
+//app.get("/notas/:id", buscarNotaPorId);
+app.post("/notas", emitirNota);
+app.delete("/notas/:id_nota", deletarNota);
+
 
 app.listen(PORT, logInfo);
