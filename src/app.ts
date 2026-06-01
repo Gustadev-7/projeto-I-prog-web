@@ -53,7 +53,7 @@ app.delete("/estoque/:id_estoque", deletarEstoque);
 
 //rotas para Nota Fiscal 
 app.get("/notas", listarNotas);
-app.get("/notas/:id", buscarNotaPorId);
+app.get("/notas/:id_nota", buscarNotaPorId);
 app.post("/notas", emitirNota);
 app.delete("/notas/:id_nota", deletarNota);
 
