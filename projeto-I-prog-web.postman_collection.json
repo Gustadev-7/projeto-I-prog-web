@@ -14,7 +14,7 @@
         "header": [],
         "body": {
           "mode": "raw",
-          "raw": "{\r\n    \"nome\": \"Ana Clara\",\r\n    \"matricula\": \"VND-001\",\r\n    \"comissao_percentual\": 5.5\r\n}",
+          "raw": "{\r\n    \"nome\": \"Carla\",\r\n    \"matricula\": \"VZN-022\",\r\n    \"comissao_percentual\": 3\r\n}",
           "options": {
             "raw": {
               "language": "json"
@@ -42,7 +42,7 @@
         "header": [],
         "body": {
           "mode": "raw",
-          "raw": "{\r\n    \"nome\": \"João da Silva\",\r\n    \"CPF\": \"123.456.789-00\",\r\n    \"telefone\": \"(11) 9999-0000\",\r\n    \"email\": \"joao@email.com\",\r\n    \"cidade\": \"São Paulo\"\r\n}",
+          "raw": "{\r\n    \"nome\": \"Jonas\",\r\n    \"CPF\": \"123.456.789-43\",\r\n    \"telefone\": \"(11) 9999-5555\",\r\n    \"email\": \"jonas@email.com\",\r\n    \"cidade\": \"Boituva\"\r\n}",
           "options": {
             "raw": {
               "language": "json"
@@ -70,7 +70,7 @@
         "header": [],
         "body": {
           "mode": "raw",
-          "raw": "{\r\n    \"marca\": \"Toyota\",\r\n    \"modelo\": \"Corolla\",\r\n    \"ano\": 2024,\r\n    \"placa\": \"ABC-1234\",\r\n    \"preco\": 110000.00,\r\n    \"cor\": \"Prata\"\r\n}",
+          "raw": "{\r\n    \"marca\": \"Honda\",\r\n    \"modelo\": \"Civic\",\r\n    \"ano\": 2022,\r\n    \"placa\": \"SEA-6321\",\r\n    \"preco\": 90000.00,\r\n    \"cor\": \"Branca\"\r\n}",
           "options": {
             "raw": {
               "language": "json"
@@ -324,7 +324,7 @@
           "raw": "{\r\n   \"numero_nota\": \"NF-2025-0001\",\r\n   \"data_emissao\": \"2025-06-01\",\r\n   \"valor_total\": 110000.00,\r\n   \"id_cliente\": 1780278355054,\r\n   \"id_vendedor\": 1780278350401,\r\n   \"id_carro\": 1780278407147\r\n}"
         },
         "url": {
-          "raw": "http://localhost:3000/notas/1780281237846",
+          "raw": "http://localhost:3000/notas/1",
           "protocol": "http",
           "host": [
             "localhost"
@@ -332,7 +332,7 @@
           "port": "3000",
           "path": [
             "notas",
-            "1780281237846"
+            "1"
           ]
         }
       },
@@ -503,7 +503,7 @@
         "header": [],
         "body": {
           "mode": "raw",
-          "raw": "   {\r\n        \"nome\": \"Jonas\",\r\n        \"telefone\": \"(11) 9999-8888\",\r\n        \"cidade\": \"Boituva\"\r\n    }",
+          "raw": "   {\r\n        \"nome\": \"Felipe\",\r\n        \"telefone\": \"(11) 9444-8888\",\r\n        \"cidade\": \"Tatuí\"\r\n    }",
           "options": {
             "raw": {
               "language": "json"
@@ -532,7 +532,7 @@
         "header": [],
         "body": {
           "mode": "raw",
-          "raw": "    {\r\n        \"nome\": \"Carla\",\r\n        \"comissao_percentual\": 4\r\n    }",
+          "raw": "    {\r\n        \"nome\": \"Patricia\",\r\n        \"comissao_percentual\": 4\r\n    }",
           "options": {
             "raw": {
               "language": "json"
@@ -561,7 +561,7 @@
         "header": [],
         "body": {
           "mode": "raw",
-          "raw": "    {\r\n        \"nome\": \"Carla\",\r\n        \"comissao_percentual\": 4\r\n    }",
+          "raw": "    {\r\n        \"quantidade\": 8,\r\n        \"localizacao_patio\": \"Galpao B-9\"\r\n    }",
           "options": {
             "raw": {
               "language": "json"
@@ -569,14 +569,14 @@
           }
         },
         "url": {
-          "raw": "http://localhost:3000/vendedores/1",
+          "raw": "http://localhost:3000/estoque/1",
           "protocol": "http",
           "host": [
             "localhost"
           ],
           "port": "3000",
           "path": [
-            "vendedores",
+            "estoque",
             "1"
           ]
         }
@@ -637,7 +637,7 @@
           "raw": "{\r\n    \"preco\": 75000,\r\n    \"cor\": \"Prata\"\r\n}"
         },
         "url": {
-          "raw": "http://localhost:3000/carros/1",
+          "raw": "http://localhost:3000/carros/2",
           "protocol": "http",
           "host": [
             "localhost"
@@ -645,7 +645,7 @@
           "port": "3000",
           "path": [
             "carros",
-            "1"
+            "2"
           ]
         }
       },
