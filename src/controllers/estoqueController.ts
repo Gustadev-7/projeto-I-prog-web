@@ -48,8 +48,8 @@ export function buscarEstoquePorCarro(req: Request, res: Response): void{
     }
 }
 
-//GET - listar todos os estoques 
-export function listarEstoque(req: Request, res:Response): void {
+//PUT - atualizar estoque 
+export function atualizarEstoque(req: Request, res:Response): void {
     try{
         //extrai o id dos parâmetros da requisição
         const id_estoque = Number(req.params.id_estoque);
@@ -64,8 +64,8 @@ export function listarEstoque(req: Request, res:Response): void {
     }
 }
 
-//PUT - atualizar estoque 
-export function atualizarEstoque(req: Request, res:Response): void {
+//GET - listar estoque 
+export function listarEstoque(req: Request, res:Response): void {
     try{
         //chama o serviço para listar o estoque
         const estoques = estoqueService.listarEstoque();
