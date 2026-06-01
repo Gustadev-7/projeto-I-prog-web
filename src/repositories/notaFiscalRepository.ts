@@ -18,11 +18,6 @@ export class NotaFiscalRepository {
         this.notasFiscais.push(nota);
     }
 
-    //filtrar por id 
-    filtrarNotaPorId(id_nota: number): NotaFiscal | undefined {
-        return this.notasFiscais.find(nota => nota.id_nota === id_nota);
-    }
-
     //filtrar por numero da nota
     filtrarNotaPorNumero(numero_nota: string): NotaFiscal | undefined {
         return this.notasFiscais.find(nota => nota.numero_nota === numero_nota);
@@ -57,7 +52,7 @@ export class NotaFiscalRepository {
 
     //filtra nota por id 
     filtraNotaPorId(id_nota: number): NotaFiscal | undefined {
-        return this.notasFiscais.find(nota => nota.id_nota === Number(id_nota));
+        return this.notasFiscais.find(nota => Number(nota.id_nota) === Number(id_nota));
     }
 
     //atualizar nota fiscal por id 
