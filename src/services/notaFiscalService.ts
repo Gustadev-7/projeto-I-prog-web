@@ -109,7 +109,7 @@ export class NotaFiscalService {
 
     //buscar nota por id
     buscarNotaPorId(id_nota: number): NotaFiscal {
-        const nota = this.notaFiscalRepository.filtrarNotaPorId(id_nota);
+        const nota = this.notaFiscalRepository.filtraNotaPorId(id_nota);
 
         if(!nota){
             throw new Error("Nota fiscal não encontrada");
