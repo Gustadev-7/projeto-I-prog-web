@@ -1,16 +1,16 @@
 import {NotaFiscal} from '../models/NotaFiscal';
 
 export class NotaFiscalRepository {
-    private static isntance: NotaFiscalRepository;
+    private static instance: NotaFiscalRepository;
     private notasFiscais: NotaFiscal[] = [];
 
     private constructor() {}
 
     public static getInstance(): NotaFiscalRepository {
-        if (!this.isntance){ 
-            this.isntance = new NotaFiscalRepository();
+        if (!this.instance){ 
+            this.instance = new NotaFiscalRepository();
         }
-        return this.isntance;
+        return this.instance;
     }
 
     //cadastrando nota fiscal
