@@ -55,6 +55,19 @@ export class ClienteService {
         return this.ClienteRepository.listarTodosClientes();
     }
 
+    //Listar notas fiscais por cliente
+    listarNotasPorCliente(id_cliente: number){
+        //verifica se o cliente existe
+        const cliente = this.ClienteRepository.listarClientePorId(id_cliente);
+
+        if(!cliente){
+            throw new Error("Cliente não encontrado");
+        }
+
+        //retorna as notas fiscais do cliente
+        return this.NotaFiscalRepository.filtrarNotasCliente(id_cliente);
+    }
+
     //Atualizar cliente 
     atualizarCliente(id_cliente: number, dados: any): Cliente {
 

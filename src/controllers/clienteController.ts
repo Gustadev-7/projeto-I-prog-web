@@ -63,6 +63,27 @@ export function listarClientes(req: Request, res: Response){
     }
 }
 
+//Listar notas fiscais por cliente
+export function listarNotasPorCliente(req: Request, res: Response){
+    try{
+        //dados recebidos da requisição e converte para number
+        const id_cliente = Number(req.params.id_cliente);
+
+        //chama o service para listar as notas fiscais do cliente
+        const notas = clienteService.listarNotasPorCliente(id_cliente);
+
+        //deu certo, retorna status 200 e as notas encontradas
+        res.status(200).json({
+            message: "Notas fiscais encontradas com sucesso!",
+            notas
+        });
+    }catch(e: unknown){
+        res.status(400).json({
+            message:(e as Error).message
+        });
+    }
+}
+
 //PUT - Atualizar cliente por id 
 export function atualizarCliente(req: Request, res: Response): void{
     try{
