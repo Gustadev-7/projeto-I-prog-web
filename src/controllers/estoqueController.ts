@@ -35,6 +35,47 @@ export function buscarEstoque(req: Request, res:Response): void {
     }
 }
 
+//GET - Buscar estoque por carro
+export function buscarEstoquePorCarro(req: Request, res: Response): void{
+    try{
+        //extrai o id dos parâmetros da requisição,e chama o serviço para buscar o estoque
+        const id_carro = Number(req.params.id_carro);
+        const estoque = estoqueService.buscarEstoquePorCarro(id_carro);
+
+        res.status(200).json(estoque);
+    }catch (e: unknown){
+        res.status(400).json({mensagem: (e as Error).message});
+    }
+}
+
+//GET - listar todos os estoques 
+export function listarEstoque(req: Request, res:Response): void {
+    try{
+        //extrai o id dos parâmetros da requisição
+        const id_estoque = Number(req.params.id_estoque);
+        const estoque = estoqueService.atualizarEstoque(id_estoque, req.body);
+
+        res.status(200).json({
+            mensagem: "Estoque atualizado com sucesso!",
+            estoque
+        });
+    }catch (e: unknown){
+        res.status(400).json({mensagem: (e as Error).message});
+    }
+}
+
+//PUT - atualizar estoque 
+export function atualizarEstoque(req: Request, res:Response): void {
+    try{
+        //chama o serviço para listar o estoque
+        const estoques = estoqueService.listarEstoque();
+
+        res.status(200).json(estoques);
+    }catch (e: unknown){
+        res.status(400).json({mensagem: (e as Error).message});
+    }
+}
+
 //DELETE - deletar estoque 
 export function deletarEstoque(req: Request, res: Response): void{
     try{

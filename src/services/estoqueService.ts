@@ -84,6 +84,11 @@ export class EstoqueService {
         return estoque;
     }
 
+    //listar estoque
+    listarEstoque():Estoque[]{
+        return this.estoqueRepository.listarEstoque();
+    }
+
     //atualizar estoque
     atualizarEstoque(id_estoque: number, dados: any): Estoque {
         //verificar se o estoque existe

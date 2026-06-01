@@ -1,10 +1,10 @@
 import express from "express";
 
 //importando os controllers 
-import { cadastrarCarro, listarCarros, buscarCarroPorId, atualizarCarro, deletarCarro } from "./controllers/carroController";
+import { cadastrarCarro, listarCarros,listarCarrosDisponiveis, buscarCarroPorId, atualizarCarro, deletarCarro } from "./controllers/carroController";
 import { cadastrarCliente, buscarCliente, listarClientes, atualizarCliente, deletarCliente } from "./controllers/clienteController";
-import { cadastrarEstoque, buscarEstoque, deletarEstoque } from "./controllers/estoqueController";
-import { emitirNota, listarNotasPorCliente, listarNotasPorVendedor, deletarNota } from "./controllers/notaFiscalController";
+import { cadastrarEstoque,listarEstoque, buscarEstoque, buscarEstoquePorCarro, atualizarEstoque, deletarEstoque } from "./controllers/estoqueController";
+import { emitirNota, listarNotasPorCliente, listarNotasPorVendedor,listarNotas, buscarNotaPorId, deletarNota } from "./controllers/notaFiscalController";
 import { cadastrarVendedor, listarVendedores, buscarVendedor, atualizarVendedor, deletarVendedor } from "./controllers/vendedorController";
 
 //criando estancia do express que é o servidor 
@@ -37,23 +37,23 @@ app.delete("/vendedores/:id_vendedor", deletarVendedor);
 
 //Rotas para Carro
 app.get("/carros", listarCarros);
-//app.get("/carros/disponiveis", listarCarrosDisponiveis);
+app.get("/carros/disponiveis", listarCarrosDisponiveis);
 app.get("/carros/:id", buscarCarroPorId);
 app.post("/carros", cadastrarCarro);
 app.put("/carros/:id", atualizarCarro);
 app.delete("/carros/:id", deletarCarro);
 
 //rotas para Estoque
-//app.get("/estoque",listarEstoque);
-//app.post("/estoque/carro/:id_carro", buscarEstoquePorCarro);
+app.get("/estoque",listarEstoque);
+app.post("/estoque/carro/:id_carro", buscarEstoquePorCarro);
 app.get("/estoque/:id_estoque", buscarEstoque);
 app.post("/estoque", cadastrarEstoque);
-//app.put("/estoque/:id", atualizarEstoque);
+app.put("/estoque/:id_estoque", atualizarEstoque);
 app.delete("/estoque/:id_estoque", deletarEstoque);
 
 //rotas para Nota Fiscal 
-//app.get("/notas", listarNotas);
-//app.get("/notas/:id", buscarNotaPorId);
+app.get("/notas", listarNotas);
+app.get("/notas/:id", buscarNotaPorId);
 app.post("/notas", emitirNota);
 app.delete("/notas/:id_nota", deletarNota);
 

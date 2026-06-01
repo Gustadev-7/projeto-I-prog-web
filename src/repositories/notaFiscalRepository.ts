@@ -50,6 +50,15 @@ export class NotaFiscalRepository {
         return this.notasFiscais.filter(nota => nota.id_carro.id_carro === id_carro);
     }
     
+    //listar todas as notas fiscais
+    listarNotasFiscais(): NotaFiscal[]{
+        return this.notasFiscais;
+    }
+
+    //filtra nota por id 
+    filtraNotaPorId(id_nota: number): NotaFiscal | undefined {
+        return this.notasFiscais.find(nota => nota.id_nota === id_nota);
+    }
 
     //atualizar nota fiscal por id 
     atualizarNotaFiscal(id_nota: number, dados: Partial<NotaFiscal>): NotaFiscal | undefined {

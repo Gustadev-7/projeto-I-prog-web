@@ -1,8 +1,10 @@
 import { Carro } from "../models/Carro";
 import { CarroRepository } from "../repositories/carroRepository";
+import { EstoqueRepository } from "../repositories/estoqueRepository";
 
 export class CarroService {
     private carroRepository = CarroRepository.getInstance();
+    private estoqueRepository = EstoqueRepository.getInstance();
 
     // Regras de Negócio para cadastro de carros
     cadastrarCarro(dados: any): Carro {
@@ -78,6 +80,18 @@ export class CarroService {
         }
 
         return this.carroRepository.atualizarCarro(id, dadosAtualizados)!;
+    }
+
+    //listar carros com estoque disponivel 
+    listarCarrosDisponiveis():Carro[]{
+        //buscar todos os carros cadastrados
+        const carros = this.carroRepository.listarCarros();
+
+        //filtra o que tem estoque > 0
+        return carros.filter(carro => {
+            const estoque = this.estoqueRepository.filtraEstoquePorCarro(carro.id_carro as number);
+            return estoque && estoque.quantidade > 0;
+        })//para cada carro busca o estoque no repositorio dele
     }
 
     // Regras de Negócio para deletar carros

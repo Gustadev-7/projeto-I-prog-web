@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import { CarroService } from "../services/carroService";
+import { stat } from "node:fs";
 
 const carroService = new CarroService(); //Cria uma instancia para usar os métodos
 
@@ -33,6 +34,22 @@ export function listarCarros(req: Request, res: Response) {
     } catch (error: any) {
         const status = error.status || 500;
         res.status(status).json({ message: error.message || "Erro interno do servidor." });
+    }
+}
+
+//GET - listar carrosdisponiveis 
+export function listarCarrosDisponiveis(req: Request, res: Response){
+    try{
+        const carros = carroService.listarCarrosDisponiveis();// Variável para armazenar os carros que rertonaram da função
+        // Caso de certo, retorna o status 200 e a mensagem
+        res.status(200).json({
+            mensagem: "Carros disponiveis listados com sucesso!",
+            carros
+        })
+        // Caso não, pega o status do erro jogado pelo Service (400, 409) ou assume 500  
+    }catch (error: any){
+        const status = error.status || 500;
+        res.status(status).json({message: error.message})
     }
 }
 

@@ -102,4 +102,18 @@ export class NotaFiscalService {
         return this.notaFiscalRepository.filtrarNotasVendedor(id_vendedor);
     }
 
+    //listar todas as notas fiscais
+    listarNotas(): NotaFiscal[]{
+        return this.notaFiscalRepository.listarNotasFiscais();
+    }
+
+    //buscar nota por id
+    buscarNotaPorId(id_nota: number): NotaFiscal {
+        const nota = this.notaFiscalRepository.filtrarNotaPorId(id_nota);
+
+        if(!nota){
+            throw new Error("Nota fiscal não encontrada");
+        }
+        return nota;
+    }
 }

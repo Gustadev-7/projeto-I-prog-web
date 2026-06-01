@@ -16,7 +16,7 @@ export function emitirNota(req: Request, res: Response){
             notaFiscal: novaNota //retorna
         });
     }catch(e: unknown){
-        res.status(400).json({message: (e as Error).message});
+        res.status(400).json({messagem: (e as Error).message});
     }
 }
 
@@ -31,7 +31,7 @@ export function listarNotasPorCliente(req: Request, res: Response){
 
         res.status(200).json(notas);
     }catch(e: unknown){
-        res.status(400).json({message: (e as Error).message});
+        res.status(400).json({messagem: (e as Error).message});
     }
 }
 
@@ -46,10 +46,36 @@ export function listarNotasPorVendedor(req: Request, res: Response){
 
         res.status(200).json(notas);
     }catch(e: unknown){
-        res.status(400).json({message: (e as Error).message});
+        res.status(400).json({messagem: (e as Error).message});
     }
 }
 
+//GET - listar todas as notas fiscais 
+export function listarNotas(req: Request, res: Response){
+    try{
+        //acessa repositorio de notas e retorna todas
+        const notas = notaFiscalService.listarNotas();
+
+        res.status(200).json(notas);
+    }catch(e: unknown){
+        res.status(400).json({mensagem: (e as Error).message});
+    }
+}
+
+//GET - buscar nota por id
+export function buscarNotaPorId(req: Request, res: Response){
+    try{
+        //recebe o id da nota pelos parâmetros da URL
+        const id_nota = Number(req.params.id_nota);
+
+        //busca a nota usando o service
+        const nota = notaFiscalService.buscarNotaPorId(id_nota);
+
+        res.status(200).json(nota);
+    }catch(e: unknown){
+        res.status(400).json({mensagem: (e as Error).message});
+    }
+}
 
 //DELETE - deletar nota fiscal 
 export function deletarNota(req: Request, res: Response){
@@ -60,6 +86,6 @@ export function deletarNota(req: Request, res: Response){
         //sempre teremos o erro, pois não podemos deletar nota
         notaFiscalService.deletarNota(id_nota)
     }catch (e: unknown){
-        res.status(400).json({message: (e as Error).message});
+        res.status(400).json({menssagem: (e as Error).message});
     }
 }
