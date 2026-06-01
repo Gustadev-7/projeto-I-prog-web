@@ -1,6 +1,16 @@
 # Sistema de Gerenciamento de Concessionária
 
-Este é um projeto de API REST para um sistema de gerenciamento de concessionária, desenvolvido como parte do curso de Análise e Desenvolvimento de Sistemas, para a matéria de Programação paraWeb lecionada pelo profesor Anisio Alfredo da Silva Junior. A API permite gerenciar carros, clientes, vendedores, estoque e notas fiscais.
+Este é um projeto de API REST para um sistema de gerenciamento de concessionária, desenvolvido como parte do curso de Análise e Desenvolvimento de Sistemas, para a matéria de Programação para Web lecionada pelo profesor Anisio Alfredo da Silva Junior. A API permite gerenciar carros, clientes, vendedores, estoque e notas fiscais.
+
+## Alunos/Desenvolvedores
+
+<table>
+  <tr>
+    <td align="center"><sub><b>Caroline Inacio Campos</b></sub></td>
+    <td align="center"><sub><b>Gabriel Demichelli da Silva</b></sub></td>
+    <td align="center"><sub><b>Gustavo de Souza Domingos</b></sub></td>
+  </tr>
+</table>
 
 ## Tecnologias Utilizadas
 
@@ -10,7 +20,7 @@ Este é um projeto de API REST para um sistema de gerenciamento de concessionár
 *   **ts-node**: Permite executar arquivos TypeScript diretamente no Node.js sem a necessidade de compilação prévia em ambiente de desenvolvimento.
 
 ## Instalação
-
+        
 1.  Clone o repositório:
     ```bash
     git clone <url-do-repositorio>
