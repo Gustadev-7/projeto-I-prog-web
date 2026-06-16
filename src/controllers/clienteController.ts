@@ -10,7 +10,6 @@ export function cadastrarCliente(req: Request, res:Response){
     try{
         //usando os dados da requisição e manda para o service
         const novocliente = clienteService.cadastrarCliente(req.body);
-
         //deu certo, retorna o status 201
         res.status(201).json(
         {
@@ -20,7 +19,13 @@ export function cadastrarCliente(req: Request, res:Response){
     );
     //se der errado, retorna status 400 e a mensagem de erro
 }catch(error: any){
-    res.status(400).json({message: error.message});
+    const mensagem = (error as Error).message;
+
+    if (mensagem.includes("CPF já cadastrado!")){
+        res.status(409).json({message: "CPF já cadastrado!"});
+    } else {
+        res.status(400).json({message: "Erro ao cadastrar cliente!"});
+    }
 }
 }
 
@@ -37,7 +42,7 @@ export function buscarCliente(req: Request, res:Response){
         res.status(200).json({ message: "Cliente encontrado com sucesso!", cliente})
     }catch(e: unknown){
         res.status(400).json({message:(e as Error).message})
-}
+    }
 }
 
 //GET - Listar todos os clientes
