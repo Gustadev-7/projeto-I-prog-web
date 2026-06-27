@@ -1,11 +1,10 @@
+import { executarComandoSQL } from "../database/mysql";
+//importando a função que executa queries sql no banco 
 import { Carro } from "../models/Carro";
-import { EstoqueRepository } from "./estoqueRepository";
-import { NotaFiscalRepository } from "./notaFiscalRepository";
 
 // Cria a classe do Repositorio para o Carro
 export class CarroRepository {
     private static instance: CarroRepository; // Cria uma cópia do objeto
-    private carroLista: Carro[] = []; // Criar uma lista com um array do objeto Carro
 
     private constructor() {}
 
@@ -16,59 +15,82 @@ export class CarroRepository {
         return this.instance;
     }
 
-    // Função responsável por cadastrar novos carros
-    cadastrarCarro(carro: Carro): void {
-        this.carroLista.push(carro);
+    //define o SQL de criação da tabela carro 
+    static getCreateTableQuery(): string{
+        return `
+            CREATE TABLE IF NOT EXISTS carros (
+                id_carro INT AUTO_INCREMENT PRIMARY KEY,
+                marca VARCHAR(50) NOT NULL,
+                modelo VARCHAR(50) NOT NULL,
+                ano INT NOT NULL,
+                placa VARCHAR(10) NOT NULL UNIQUE,
+                preco DECIMAL(10,2) NOT NULL,
+                cor VARCHAR(30) NOT NULL
+        );
+        `;
+    }
+    
+    // Função responsável por inserir um carro no banco de dados
+    async inserirCarro(carro: Carro): Promise<Carro> { 
+        //async função assincrona que retorna uma Promise (erro ou sucesso) do tipo Carro
+
+        const resultado = await executarComandoSQL(
+            // os ? são substituídos pelos valores do array abaixo
+            `INSERT INTO carros (marca, modelo, ano, placa, preco, cor) VALUES (?, ?, ?, ?, ?, ?)`,
+            [carro.marca, carro.modelo, carro.ano, carro.placa, carro.preco, carro.cor]
+        )
+        return new Carro(resultado.insertId, carro.marca, carro.modelo, carro.ano, carro.placa, carro.preco, carro.cor);
     }
 
-    // Função responsável por listar todos os carros
-    listarCarros(): Carro[] {
-        return this.carroLista;
+    // Função responsável por listar todos os carros do banco de dados
+    async buscarTodoCarros(): Promise<Carro[]> {
+        const linhas = await executarComandoSQL(`SELECT * FROM carros`, []); // SELECT retorna array de objetos puros (JSON), não instâncias de Carro
+
+        return linhas.map((l: any)=> // map percorre cada linha e converte para objeto Carro
+            new Carro(l.id_carro, l.marca, l.modelo, l.ano, l.placa, l.preco, l.cor)
+    );
+}
+
+// Função responsável por buscar um carro pelo id fornecido pelo usuário
+    async buscarCarroPorId(id_carro: number): Promise<Carro | null> {
+        const linhas = await executarComandoSQL(
+            `SELECT * FROM carros WHERE id_carro = ?`, [id_carro]  // ? é substituído pelo id_carro
+        );
+        if (linhas.length === 0) return null; // SELECT sempre retorna array, se vazio não encontrou
+        const l = linhas[0];   // pega o primeiro (e único) elemento do array
+        return new Carro(l.id_carro, l.marca, l.modelo, l.ano, l.placa, l.preco, l.cor);
     }
 
-    // Função responsável por lista o carro com o id fornecido pelo usuário
-    listarPorId(id: number): Carro | undefined {
-        return this.carroLista.find(carro => carro.id_carro === id);
-    }
-
-    // Função responsável por listar o carro com a placa fornecida pelo usuário
-    buscarPorPlaca(placa: string): Carro | undefined {
-        return this.carroLista.find(carro => carro.placa === placa);
+    //Busca por placa para validar 
+    async buscarCarroPorPlaca(placa: string): Promise<Carro | null > {
+        const linhas = await executarComandoSQL(
+            `SELECT * FROM carros WHERE placa = ?`, [placa]
+        );
+        if(linhas.length === 0) return null; // placa não encontrada
+        const l = linhas[0];
+        return new Carro(l.id_carro, l.marca, l.modelo, l.ano, l.placa, l.preco, l.cor);
     }
 
     // Função para atualizar o apenas com as propriedades que foram enviadas no corpo da requisição
-    atualizarCarro(id: number, dados: Partial<Carro>): Carro | undefined {
-        const carro = this.carroLista.find(carro => carro.id_carro === id);
-        if (!carro) return undefined;
+    async atualizarCarro(id_carro: number, dados: Partial<Carro>): Promise<Carro | null> {
+        const campos = Object.keys(dados).filter(c => c !== 'id_carro');
+        // // filtra o id_carro para não atualizar a chave primária
 
-        Object.assign(carro, dados);
-        return carro;
+        if(campos.length === 0) return this.buscarCarroPorId(id_carro);
+        const setClause = campos.map(c => `${c} = ?`).join(', '); // monta → "marca = ?, preco = ?"
+        const valores = campos.map(c => (dados as any)[c]); // pega os valores → ["Toyota", 120000]
+        await executarComandoSQL(
+            `UPDATE carros SET ${setClause} WHERE id_carro = ?`,
+            [...valores, id_carro]
+        );
+        return this.buscarCarroPorId(id_carro);
     }
 
     // Função para deletar o carro com id fornecido pelo usuário
-    deletarCarro(id: number): Carro | string | undefined {
-        const estoqueRepository = EstoqueRepository.getInstance(); // Cria uma instância do repositório de estoque 
-        const notaFiscalRepository = NotaFiscalRepository.getInstance(); // Cria uma instância do repositório de nota fiscal
-
-        const carroEmEstoque = estoqueRepository.filtraEstoquePorCarro(id); // Verifica se o carro está presente no estoque
-        // Se o carro estiver presente no estoque e a quantidade for maior que 0
-        if (carroEmEstoque && carroEmEstoque.quantidade > 0) {
-            return "Não é possível excluir o carro, pois ele possui estoque."; // Retorna uma mensagem informando que o carro não pode ser excluído
-        }
-
-        const carroEmNotaFiscal = notaFiscalRepository.filtrarNotasCarro(id); // Verifica se o carro está presente em alguma nota fiscal
-        // Se o carro estiver presente em alguma nota fiscal
-        if (carroEmNotaFiscal.length > 0) {
-            return "Não é possível excluir o carro, pois ele está associado a uma ou mais notas fiscais."; // Retorna uma mensagem informando que o carro não pode ser excluído
-        }
-
-        const carroIndex = this.carroLista.findIndex(carro => carro.id_carro === id); // Encontra o índice do carro na lista de carros
-        if(carroIndex === -1) return undefined; // Se o carro não for encontrado, retorna undefined
-
-        const carroDeletado = this.carroLista[carroIndex]; // Guarda uma cópia do carro antes de removê-lo para poder retornar no final
-
-        this.carroLista.splice(carroIndex, 1); // Remove o carro da lista de carros usando o índice encontrado
-
-        return carroDeletado;
+    async deletarCarro(id_carro: number): Promise<Carro | null> {
+        const carro = await this.buscarCarroPorId(id_carro);
+        if(!carro) return null;
+        await executarComandoSQL(`DELETE FROM carro WHERE id_carro = ?`, [id_carro]);  // remove do banco
+        return carro;
     }
 }
