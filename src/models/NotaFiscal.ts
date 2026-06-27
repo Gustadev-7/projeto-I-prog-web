@@ -1,5 +1,5 @@
 export class NotaFiscal{
-
+    // declara + recebe + atribui de uma vez - gera id pelo banco
     constructor(
        public id_nota: number | null,
        public numero_nota: string,
