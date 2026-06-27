@@ -1,12 +1,11 @@
 import { Vendedor } from "../model/Vendedor"
+import { executarComandoSQL } from "../database/mysql"
 
 export class VendedorRepository{
     private static instance: VendedorRepository;
-    private vendedorList: Vendedor[] = [];
-
     private constructor () {}
 
-    //singleton para garantir que haja apenas uma instancia do repositório
+    // Função singleton para garantir que haja apenas uma instância do repositório
     public static getInstance(): VendedorRepository{
         if(!this.instance){
             this.instance = new VendedorRepository();
@@ -14,52 +13,80 @@ export class VendedorRepository{
         return this.instance;
     }
 
-    //cadastrar vendedor
-    insereVendedor(vendedor: Vendedor){
-        this.vendedorList.push(vendedor)
+    static getCreateTableQuery(): string {
+        return `
+            CREATE TABLE IF NOT EXISTS vendedores (
+                id_vendedor INT AUTO_INCREMENT PRIMARY KEY,
+                nome VARCHAR(100) NOT NULL,
+                matricula VARCHAR(255) NOT NULL UNIQUE,
+                comissao_percentual DECIMAL(5, 2) NOT NULL
+            )
+        `;
     }
 
-    //listar vendedores
-    listarVendedores(): Vendedor[]{
-        return this.vendedorList;
+    // Cadastrar vendedor
+    async inserirVendedor(vendedor: Vendedor): Promise<Vendedor> {
+        const resultado = await executarComandoSQL(
+            `INSERT INTO vendedores (nome, matricula, comissao_percentual) VALUES (?, ?, ?)`,
+            [vendedor.nome, vendedor.matricula, vendedor.comissao_percentual]
+        );
+        return new Vendedor(resultado.insertId, vendedor.nome, vendedor.matricula, vendedor.comissao_percentual);
     }
 
-    //filtrar vendedor por id
-    filtraVendedorPorId(id_vendedor: Number): Vendedor | undefined{
-        return this.vendedorList.find(vendedor => vendedor.id_vendedor === id_vendedor);
+    // Listar vendedores
+    async buscarTodosVendedores(): Promise<Vendedor[]> {
+        const linhas = await executarComandoSQL(
+            `SELECT * FROM vendedores`, []
+        );
+        return linhas.map((linha: any) => 
+            new Vendedor(linha.id_vendedor, linha.nome, linha.matricula, Number(linha.comissao_percentual))
+        );
     }
 
-    buscarPorMatricula(matricula: string): Vendedor | undefined {
-    return this.vendedorList.find(
-        vendedor => vendedor.matricula === matricula
-    );
+    // Filtrar vendedor por id
+    async buscarVendedorPorId(id_vendedor: number): Promise<Vendedor | null> {
+        const linhas = await executarComandoSQL(
+            `SELECT * FROM vendedores WHERE id_vendedor = ?`, [id_vendedor]
+        );
+        if (linhas.length === 0) return null;
+        const linha = linhas[0];
+        return new Vendedor(linha.id_vendedor, linha.nome, linha.matricula, Number(linha.comissao_percentual));
+    }
+
+    // Filtrar vendedor por matrícula
+    async buscarVendedorPorMatricula(matricula: string): Promise<Vendedor | null> {
+        const linhas = await executarComandoSQL(
+            `SELECT * FROM vendedores WHERE matricula = ?`, [matricula]
+        );
+        if (linhas.length === 0) return null;
+        const linha = linhas[0];
+        return new Vendedor(linha.id_vendedor, linha.nome, linha.matricula, Number(linha.comissao_percentual));
     }
     
-    //atualizar vendedor por id
-    atualizarVendedor(id_vendedor: Number, dados: Partial<Vendedor>): Vendedor | undefined {
+    // Atualizar vendedor
+    async atualizarVendedor(id_vendedor: number, dados: Partial<Vendedor>): Promise<Vendedor | null> {
+        const campos = Object.keys(dados).filter(campo => campo !== 'id_vendedor');
+        if (campos.length === 0) 
+            return this.buscarVendedorPorId(id_vendedor);
 
-        //encontra o vendedor a ser atualizado usando o id fornecido
-        const vendedor = this.vendedorList.find(vendedor => vendedor.id_vendedor === id_vendedor);
+        const setClause = campos.map(campo => `${campo} = ?`).join(', ');
+        const valores = campos.map(campo => (dados as any)[campo]);
 
-        if (!vendedor) return undefined;
-
-        //atualiza os dados do vendedor encontrado com os novos dados fornecidos
-        Object.assign(vendedor, dados);
-        return vendedor;
+        await executarComandoSQL(
+            `UPDATE vendedores SET ${setClause} WHERE id_vendedor = ?`, 
+            [...valores, id_vendedor]
+        );
+        return this.buscarVendedorPorId(id_vendedor);
     }
 
-    //deletar vendedor por id
-    deletarVendedor(id_vendedor: Number): Vendedor | undefined {
-
-        //encontra o índice do vendedor a ser deletado
-        const vendedor = this.vendedorList.findIndex(vendedor => vendedor.id_vendedor === id_vendedor);
-        if(vendedor === -1) return undefined;
-
-        //armazena o vendedor a ser deletado para retornar depois da remoção
-        const vendedorDeletado = this.vendedorList[vendedor];
-
-        //remove o vendedor da lista usando o índice encontrado
-        this.vendedorList.splice(vendedor, 1);
-        return vendedorDeletado;
+    // Deletar vendedor
+    async deletarVendedor(id_vendedor: number): Promise<Vendedor | null> {
+        const vendedor = await this.buscarVendedorPorId(id_vendedor);
+        if (!vendedor) return null;
+        
+        await executarComandoSQL(
+            `DELETE FROM vendedores WHERE id_vendedor = ?`, [id_vendedor]
+        );
+        return vendedor;
     }
 }
