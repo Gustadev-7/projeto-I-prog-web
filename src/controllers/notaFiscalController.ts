@@ -16,7 +16,12 @@ export function emitirNota(req: Request, res: Response){
             notaFiscal: novaNota //retorna
         });
     }catch(e: unknown){
-        res.status(400).json({messagem: (e as Error).message});
+        const mensagem = (e as Error).message;
+        if(mensagem.includes("Cliente não encontrado")){
+            res.status(404).json({message: mensagem});
+        } else if(mensagem.includes("Vendedor não encontrado")){
+            res.status(404).json({message: mensagem});
+        }
     }
 }
 
@@ -90,6 +95,9 @@ export function deletarNota(req: Request, res: Response){
         //sempre teremos o erro, pois não podemos deletar nota
         notaFiscalService.deletarNota(id_nota)
     }catch (e: unknown){
-        res.status(400).json({menssagem: (e as Error).message});
+        const mensagem = (e as Error).message;
+        if(mensagem.includes("Nota fiscal não encontrada")){
+            res.status(422).json({message: mensagem});
+        }      
     }
 }
