@@ -1,4 +1,4 @@
-import { Carro } from "../models/Carro";
+import { Carro } from "../model/Carro";
 import { CarroRepository } from "../repositories/carroRepository";
 import { EstoqueRepository } from "../repositories/estoqueRepository";
 import { NotaFiscalRepository } from "../repositories/notaFiscalRepository";

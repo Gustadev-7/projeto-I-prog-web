@@ -1,4 +1,4 @@
-import {NotaFiscal} from '../models/NotaFiscal';
+import {NotaFiscal} from '../model/NotaFiscal';
 
 export class NotaFiscalRepository {
     private static instance: NotaFiscalRepository;

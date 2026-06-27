@@ -1,6 +1,6 @@
 //vendedorService
 import { VendedorRepository } from "../repositories/vendedorRepository";
-import { Vendedor } from "../models/Vendedor";
+import { Vendedor } from "../model/Vendedor";
 import { NotaFiscalRepository } from "../repositories/notaFiscalRepository";
 
 export class VendedorService{

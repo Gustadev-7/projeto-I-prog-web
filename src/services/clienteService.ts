@@ -1,6 +1,6 @@
 import { ClienteRepository } from "../repositories/clienteRepository";
 import { NotaFiscalRepository } from "../repositories/notaFiscalRepository";
-import { Cliente } from "../models/Cliente";
+import { Cliente } from "../model/Cliente";
 
 export class ClienteService {
 

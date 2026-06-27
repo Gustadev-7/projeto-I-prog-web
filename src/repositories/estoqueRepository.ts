@@ -1,5 +1,5 @@
 //Repositório Estoque
-import { Estoque } from "../models/Estoque"
+import { Estoque } from "../model/Estoque"
 
 export class EstoqueRepository{
     private static instance: EstoqueRepository

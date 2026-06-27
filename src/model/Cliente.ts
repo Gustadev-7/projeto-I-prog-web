@@ -3,7 +3,7 @@ export class Cliente{
     constructor(
         public id_cliente: Number | null,
         public nome: string,
-        public CPF: string,
+        public cpf: string,
         public telefone: string,
         public email: string | null,
         public cidade: string | null,
