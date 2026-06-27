@@ -1,11 +1,12 @@
 import { Carro } from "../models/Carro";
 import { CarroRepository } from "../repositories/carroRepository";
 import { EstoqueRepository } from "../repositories/estoqueRepository";
+import { NotaFiscalRepository } from "../repositories/notaFiscalRepository";
 
 export class CarroService {
     private carroRepository = CarroRepository.getInstance();
     private estoqueRepository = EstoqueRepository.getInstance();
-
+    private notaFiscalRepository = NotaFiscalRepository.getInstance();
     // Regras de Negócio para cadastro de carros
     cadastrarCarro(dados: any): Carro {
         const { marca, modelo, ano, placa, preco, cor } = dados;
@@ -96,6 +97,18 @@ export class CarroService {
 
     // Regras de Negócio para deletar carros
     deletarCarro(id: number): void {
+        const estoque = this.estoqueRepository.filtraEstoquePorCarro(id);
+
+        if(estoque && estoque.quantidade > 0) {
+            throw { status: 400, message: "Não é permitido deletar um carro que possui estoque disponível." };
+        }
+
+        //notas associadas a esse carro, se tiver não pode deletar
+        const notasAssociadas = this.notaFiscalRepository.filtrarNotasCarro(id);
+        if(notasAssociadas.length > 0){
+            throw { status: 400, message: "Não é permitido deletar um carro que possui notas fiscais associadas." };
+        }
+        
         this.buscarPorId(id);
         this.carroRepository.deletarCarro(id);
     }

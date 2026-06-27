@@ -23,15 +23,19 @@ export function emitirNota(req: Request, res: Response){
 //GET - Listar notas por cliente 
 export function listarNotasPorCliente(req: Request, res: Response){
     try{
-        //recebe dados da requisção (query por ser filtro - pode vir ou não)
-        const id_cliente = Number(req.query.id_cliente);
 
-        //retorna um array de notas fiscais do client 
-        const notas = notaFiscalService.listarNotasPorCliente(id_cliente);
+        const id_cliente = Number(req.params.id);
+
+        const notas =
+            notaFiscalService.listarNotasPorCliente(id_cliente);
 
         res.status(200).json(notas);
+
     }catch(e: unknown){
-        res.status(400).json({messagem: (e as Error).message});
+
+        res.status(400).json({
+            mensagem: (e as Error).message
+        });
     }
 }
 
@@ -39,7 +43,7 @@ export function listarNotasPorCliente(req: Request, res: Response){
 export function listarNotasPorVendedor(req: Request, res: Response){
     try{
         //recebe dados da requisção (query por ser filtro - pode vir ou não)
-        const id_vendedor = Number(req.query.id_vendedor);
+        const id_vendedor = Number(req.params.id);
 
          //retorna um array de notas fiscais do client 
         const notas = notaFiscalService.listarNotasPorVendedor(id_vendedor);

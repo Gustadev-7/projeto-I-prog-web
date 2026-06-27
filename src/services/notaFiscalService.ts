@@ -102,6 +102,11 @@ export class NotaFiscalService {
         return this.notaFiscalRepository.filtrarNotasVendedor(id_vendedor);
     }
 
+    //listar notas por carro especifico
+    listarNotasPorCarro(id_carro: number): NotaFiscal[]{
+        return this.notaFiscalRepository.filtrarNotasCarro(id_carro);
+    }
+
     //listar todas as notas fiscais
     listarNotas(): NotaFiscal[]{
         return this.notaFiscalRepository.listarNotasFiscais();

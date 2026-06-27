@@ -29,19 +29,26 @@ export function cadastrarCliente(req: Request, res:Response){
 }
 }
 
-// GET - Buscar cliente por id ou CPF 
-export function buscarCliente(req: Request, res:Response){
+// GET - Buscar cliente por id
+export function buscarCliente(req: Request, res: Response){
     try{
-        //extrai o id_cliente e CPF da query da requisição
-        const{id_cliente, CPF} = req.query as {id_cliente?: string, CPF?: string};
-        
+        //dados recebidos da requisição e converte para number
+        const id_cliente = Number(req.params.id);
+
+        //chama o service para buscar o cliente usando o id recebido da requisição
         const cliente = clienteService.buscarCliente(
-            id_cliente ? Number(id_cliente): undefined, //converto para number se id_cliente existir
-            CPF 
-        )
-        res.status(200).json({ message: "Cliente encontrado com sucesso!", cliente})
+            id_cliente,
+            undefined
+        );
+
+        //deu certo, retorna status 200 e o cliente encontrado
+        res.status(200).json({
+            message: "Cliente encontrado com sucesso!",
+            cliente
+        });
+
     }catch(e: unknown){
-        res.status(400).json({message:(e as Error).message})
+        res.status(404).json({ message:(e as Error).message }); // ← 404
     }
 }
 
@@ -56,6 +63,27 @@ export function listarClientes(req: Request, res: Response){
     }catch(e: unknown){ 
         //em caso de erro
         res.status(400).json({message:(e as Error).message})
+    }
+}
+
+//Listar notas fiscais por cliente
+export function listarNotasPorCliente(req: Request, res: Response){
+    try{
+        //dados recebidos da requisição e converte para number
+        const id_cliente = Number(req.params.id_cliente);
+
+        //chama o service para listar as notas fiscais do cliente
+        const notas = clienteService.listarNotasPorCliente(id_cliente);
+
+        //deu certo, retorna status 200 e as notas encontradas
+        res.status(200).json({
+            message: "Notas fiscais encontradas com sucesso!",
+            notas
+        });
+    }catch(e: unknown){
+        res.status(400).json({
+            message:(e as Error).message
+        });
     }
 }
 
@@ -90,8 +118,11 @@ export function deletarCliente(req: Request, res: Response): void {
             message: "Cliente deletado com sucesso!"
         })
     }catch (e: unknown){
-        res.status(400).json({
-            message: (e as Error).message
-        })
+        const mensagem = (e as Error).message;
+        if(mensagem.includes("Cliente possui notas fiscais associadas")){
+            res.status(422).json({message: mensagem});
+        } else {
+            res.status(404).json({message: mensagem});
+        }
     }
 }

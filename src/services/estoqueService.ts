@@ -11,24 +11,36 @@ export class EstoqueService {
 
         //Validação dos dados obrigatórios
         if(!dados.id_carro || dados.quantidade == null || !dados.localizacao_patio || !dados.data_entrada){
-            throw new Error("Dados obrigatórios incompletos");
+            throw {
+                status: 400,
+                message: "Dados obrigatórios incompletos"
+            };
         }
 
         //verificar se o carro existe
         const carro = this.carroRepository.listarPorId(dados.id_carro);
 
         if(!carro){
-            throw new Error("Carro não encontrado");
+            throw {
+                status: 404,
+                message: "Carro não encontrado"
+            };
         }
 
         //quantidade deve ser maior ou igual a zero
         if(Number(dados.quantidade) < 0){
-            throw new Error("Quantidade deve ser maior ou igual a zero");
+            throw {
+                status: 400,
+                message: "Quantidade deve ser maior ou igual a zero"
+            };
         }
 
         //quantidade deve ser um número inteiro
         if(!Number.isInteger(Number(dados.quantidade))){
-            throw new Error("Quantidade deve ser um número inteiro");
+            throw {
+                status: 400,
+                message: "Quantidade deve ser um número inteiro"
+            };
         }
 
         //validar data de entrada, não pode ser futura
@@ -37,14 +49,20 @@ export class EstoqueService {
 
 
         if(data_entrada > hoje){
-            throw new Error("Data de entrada não pode ser futura");
+            throw {
+                status: 400,
+                message: "Data de entrada não pode ser futura"
+            };
         }
         
         //verificar se já existe um estoque para o mesmo carro
         const estoqueExistente = this.estoqueRepository.filtraEstoquePorCarro(dados.id_carro);
 
         if(estoqueExistente){
-            throw new Error("Já existe um estoque para este carro");
+            throw {
+                status: 400,
+                message: "Já existe um estoque para este carro"
+            };
         }
 
         //criando o estoque com os dados da requisição
@@ -67,7 +85,10 @@ export class EstoqueService {
         const estoque = this.estoqueRepository.filtraEstoquePorId(id_estoque);
 
         if(!estoque){
-            throw new Error("Estoque não encontrado");
+            throw {
+                status: 404,
+                message: "Estoque não encontrado"
+            };
         }
 
         return estoque;
@@ -78,7 +99,10 @@ export class EstoqueService {
         const estoque = this.estoqueRepository.filtraEstoquePorCarro(id_carro);
 
         if(!estoque){
-            throw new Error("Estoque não encontrado para este carro");
+            throw {
+                status: 404,
+                message: "Estoque não encontrado para este carro"
+            };
         }
 
         return estoque;
@@ -94,17 +118,26 @@ export class EstoqueService {
         //verificar se o estoque existe
         const estoque = this.estoqueRepository.filtraEstoquePorId(id_estoque);
         if(!estoque){
-            throw new Error("Estoque não encontrado");
+            throw {
+                status: 404,
+                message: "Estoque não encontrado"
+            };
         }
 
         //se for fornecido id_carro, verificar se o carro existe
         if(dados.quantidade !== undefined && Number(dados.quantidade) < 0){
-            throw new Error("Quantidade deve ser maior ou igual a zero");
+            throw {
+                status: 400,
+                message: "Quantidade deve ser maior ou igual a zero"
+            };
         }
 
         //quantidade deve ser um número inteiro
         if(dados.quantidade !== undefined && !Number.isInteger(Number(dados.quantidade))){
-            throw new Error("Quantidade deve ser um número inteiro");
+            throw {
+                status: 400,
+                message: "Quantidade deve ser um número inteiro"
+            };
         }
 
         if(dados.data_entrada){
@@ -112,14 +145,20 @@ export class EstoqueService {
             const hoje = new Date();
 
             if(data_entrada > hoje){
-                throw new Error("Data de entrada não pode ser futura");
+                throw {
+                    status: 400,
+                    message: "Data de entrada não pode ser futura"
+                };
             }
         }
 
         const estoqueAtualizado = this.estoqueRepository.atualizarEstoque(id_estoque, dados);
 
         if(!estoqueAtualizado){
-            throw new Error("Erro ao atualizar estoque");
+            throw {
+                status: 500,
+                message: "Erro ao atualizar estoque"
+            };
         }
 
         return estoqueAtualizado;
@@ -130,7 +169,10 @@ export class EstoqueService {
         const estoqueDeletado = this.estoqueRepository.deletarEstoque(id_estoque);
 
         if(!estoqueDeletado){
-            throw new Error("Estoque não encontrado para deletar");
+            throw {
+                status: 404,
+                message: "Estoque não encontrado para deletar"
+            };
         }
     }
  }
