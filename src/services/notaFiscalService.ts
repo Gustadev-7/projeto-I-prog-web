@@ -1,4 +1,4 @@
-import {NotaFiscal} from '../models/NotaFiscal';
+import {NotaFiscal} from '../model/NotaFiscal';
 import {NotaFiscalRepository} from '../repositories/notaFiscalRepository';
 import {ClienteRepository} from '../repositories/clienteRepository';
 import {VendedorRepository} from '../repositories/vendedorRepository';

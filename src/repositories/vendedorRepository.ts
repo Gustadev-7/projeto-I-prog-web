@@ -1,4 +1,4 @@
-import { Vendedor } from "../models/Vendedor"
+import { Vendedor } from "../model/Vendedor"
 
 export class VendedorRepository{
     private static instance: VendedorRepository;

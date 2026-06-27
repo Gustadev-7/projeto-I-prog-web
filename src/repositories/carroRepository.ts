@@ -1,6 +1,12 @@
+<<<<<<< HEAD
 import { executarComandoSQL } from "../database/mysql";
 //importando a função que executa queries sql no banco 
 import { Carro } from "../models/Carro";
+=======
+import { Carro } from "../model/Carro";
+import { EstoqueRepository } from "./estoqueRepository";
+import { NotaFiscalRepository } from "./notaFiscalRepository";
+>>>>>>> f8a1679fbb042bdc6f149fe1634d930f54328e40
 
 // Cria a classe do Repositorio para o Carro
 export class CarroRepository {
