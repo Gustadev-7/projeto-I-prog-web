@@ -10,7 +10,7 @@ const dbConfig = {
   host: 'localhost',
   port: 3306,
   user: 'root',
-  password: 'sua_senha',
+  password: 'mike213141',
   database: 'concessionaria'
 };
 
@@ -51,11 +51,11 @@ export async function inicilizarBanco(): Promise<void> {
     console.log('Sincronizando o banco de dados'); // Exibe uma mensagem no console indicando que a sincronização do banco de dados está em andamento
     // Cria um array contendo as queries de criação das tabelas para cada repositório
     const schemas = [
-        ClienteRepository.getCreatTableQuery(),
-        VendedorRepository.getCreatTableQuery(),
-        CarroRepository.getCreatTableQuery(),
-        EstoqueRepository.getCreatTableQuery(),
-        NotaFiscalRepository.getCreatTableQuery(),
+        ClienteRepository.getCreateTableQuery(),
+        VendedorRepository.getCreateTableQuery(),
+        CarroRepository.getCreateTableQuery(),
+        EstoqueRepository.getCreateTableQuery(),
+        NotaFiscalRepository.getCreateTableQuery(),
     ];
 
     // Tenta executar as queries de criação das tabelas no banco de dados MySQL
