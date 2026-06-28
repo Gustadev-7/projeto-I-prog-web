@@ -1,106 +1,154 @@
+import { Cliente } from "../model/Cliente";
 import { ClienteRepository } from "../repositories/clienteRepository";
 import { NotaFiscalRepository } from "../repositories/notaFiscalRepository";
-import { Cliente } from "../model/Cliente";
 
 export class ClienteService {
+    private clienteRepository = ClienteRepository.getInstance();
+    private notaFiscalRepository = NotaFiscalRepository.getInstance();
 
-    ClienteRepository: ClienteRepository = ClienteRepository.getInstance();
-    NotaFiscalRepository: NotaFiscalRepository = NotaFiscalRepository.getInstance();
+    //cadastrar cliente
+     async cadastrarCliente(dados: any): Promise<Cliente> {
 
-    //Criando cliente 
-    cadastrarCliente(dados: any): Cliente {
-
-        //Validação dos dados obrigatórios
-        if(!dados.nome || !dados.CPF || !dados.telefone ){
-            throw new Error("Dados obrigatórios incompletos");
+        // Validação dos campos obrigatórios
+        if (!dados.nome || !dados.cpf || !dados.telefone) {
+            throw {
+                status: 400,
+                message: "Dados obrigatórios incompletos."
+            };
         }
 
-        //Clientes com o mesmo CPF não podem ser cadastrados
-        if(this.ClienteRepository.listarClientePorCPF(dados.CPF)){
-            throw new Error("CPF já cadastrado");
+        // Verifica CPF duplicado
+        const clienteExistente = await this.clienteRepository.buscarClientePorCPF(dados.cpf);
+
+        if (clienteExistente) {
+            throw {
+                status: 409,
+                message: "CPF já cadastrado."
+            };
         }
 
-        //criando o cliente com os dados da requisição '
         const cliente = new Cliente(
+            null,
             dados.nome,
-            dados.CPF,
+            dados.cpf,
             dados.telefone,
-            dados.email,
-            dados.cidade
+            dados.email ?? null,
+            dados.cidade ?? null
         );
 
-        //inserimos o cliente no reppsitótio, guarda no array de clientes 
-        this.ClienteRepository.insereCliente(cliente); 
-        return cliente;
+        return await this.clienteRepository.inserirCliente(cliente);
     }
 
-    //Buscar cliente 
-    buscarCliente(id_cliente?: number, CPF?: string): Cliente{
-       
-        if(!id_cliente && !CPF){
-            throw new Error("Informe id ou  CPF para busca do cliente");
-        }
+    // Buscar cliente por ID
+    async buscarCliente(id_cliente: number): Promise<Cliente> {
 
-        //Busca por ternário, como se fosse if (se não achar por id, busca por CPF)
-        const cliente = id_cliente ? this.ClienteRepository.listarClientePorId(id_cliente) : this.ClienteRepository.listarClientePorCPF(CPF!);
+        const cliente = await this.clienteRepository.buscarClientePorId(id_cliente);
 
-        if(!cliente){
-            throw new Error("Cliente não encontrado");
+        if (!cliente) {
+            throw {
+                status: 404,
+                message: "Cliente não encontrado."
+            };
         }
 
         return cliente;
     }
-    
-    listarClientes(): Cliente[]{
-        return this.ClienteRepository.listarTodosClientes();
-    }
 
-    //Listar notas fiscais por cliente
-    listarNotasPorCliente(id_cliente: number){
-        //verifica se o cliente existe
-        const cliente = this.ClienteRepository.listarClientePorId(id_cliente);
+    // Buscar cliente por CPF
+    async buscarClientePorCPF(cpf: string): Promise<Cliente> {
 
-        if(!cliente){
-            throw new Error("Cliente não encontrado");
+        const cliente = await this.clienteRepository.buscarClientePorCPF(cpf);
+
+        if (!cliente) {
+            throw {
+                status: 404,
+                message: "Cliente não encontrado."
+            };
         }
 
-        //retorna as notas fiscais do cliente
-        return this.NotaFiscalRepository.filtrarNotasCliente(id_cliente);
+        return cliente;
     }
 
-    //Atualizar cliente 
-    atualizarCliente(id_cliente: number, dados: any): Cliente {
+    // Listar clientes
+    async listarClientes(): Promise<Cliente[]> {
+        return await this.clienteRepository.buscarTodosClientes();
+    }
 
-        //verifica se a atualização do CPF é um CPF que já temos 
-        if(dados.CPF){
-            const clienteExistente = this.ClienteRepository.listarClientePorCPF(dados.CPF);
-        
-            //se o cpf já existir e for diferente do cliente que estamos atualizando
-            if(clienteExistente && clienteExistente.id_cliente !== id_cliente){
-                throw new Error("CPF já cadastrado para outro cliente");
+    // Atualizar cliente
+    async atualizarCliente(
+        id_cliente: number,
+        dadosAtualizados: Partial<Cliente>
+    ): Promise<Cliente> {
+
+        // Verifica se o cliente existe
+        const clienteExistente =
+            await this.clienteRepository.buscarClientePorId(id_cliente);
+
+        if (!clienteExistente) {
+            throw {
+                status: 404,
+                message: "Cliente não encontrado."
+            };
+        }
+
+        // Validar CPF duplicado
+        if (dadosAtualizados.cpf) {
+
+            const cpfExistente =
+                await this.clienteRepository.buscarClientePorCPF(
+                    dadosAtualizados.cpf
+                );
+
+            if (
+                cpfExistente &&
+                Number(cpfExistente.id_cliente) !== id_cliente
+            ) {
+                throw {
+                    status: 409,
+                    message: "CPF já cadastrado para outro cliente."
+                };
             }
         }
-            const clienteAtualizado = this.ClienteRepository.atualizaCliente(id_cliente, dados); 
 
-            if(!clienteAtualizado){
-                throw new Error("Cliente não encontrado!");
+        const clienteAtualizado =
+            await this.clienteRepository.atualizarCliente(
+                id_cliente,
+                dadosAtualizados
+            );
+
+        if (!clienteAtualizado) {
+            throw {
+                status: 404,
+                message: "Cliente não encontrado."
+            };
         }
+
         return clienteAtualizado;
     }
 
-    //Deletar cliente se não tiver nota fiscal associada
-    deletarCliente(id_cliente: number): void {
-        const notas = this.NotaFiscalRepository.filtrarNotasCliente(id_cliente);
+    // Deletar cliente
+    async deletarCliente(id_cliente: number): Promise<void> {
 
-        //verifica o tamanho do array que filtrar notas cliente retornou, se tiver pelo menos 1 não pode deletar
-        if(notas.length > 0){
-            throw new Error("Cliente possui notas fiscais associadas, não é possivel deletar");
+        const cliente = await this.clienteRepository.buscarClientePorId(id_cliente);
+
+        if (!cliente) {
+            throw {
+                status: 404,
+                message: "Cliente não encontrado."
+            };
         }
 
-        const clienteDeletado = this.ClienteRepository.deletaCliente(id_cliente); //deleta
+        //verificar se o cliente possui notas fiscais associadas
+        const notasFiscais = await this.notaFiscalRepository.buscarPorCliente(id_cliente);
 
-        if(!clienteDeletado){
-            throw new Error("Cliente não encontrado!");
+        if (notasFiscais.length > 0) {
+            throw {
+                status: 400,
+                message: "Cliente possui notas fiscais associadas."
+            };
+        }
+
+        await this.clienteRepository.deletarCliente(id_cliente);
     }
-}
+
 }
