@@ -1,124 +1,213 @@
-import {NotaFiscal} from '../model/NotaFiscal';
-import {NotaFiscalRepository} from '../repositories/notaFiscalRepository';
-import {ClienteRepository} from '../repositories/clienteRepository';
-import {VendedorRepository} from '../repositories/vendedorRepository';
-import {CarroRepository} from '../repositories/carroRepository';
-import {EstoqueRepository} from '../repositories/estoqueRepository';
+import { NotaFiscal } from "../model/NotaFiscal";
+import { NotaFiscalRepository } from "../repositories/notaFiscalRepository";
+import { ClienteRepository } from "../repositories/clienteRepository";
+import { VendedorRepository } from "../repositories/vendedorRepository";
+import { CarroRepository } from "../repositories/carroRepository";
+import { EstoqueRepository } from "../repositories/estoqueRepository";
 
 export class NotaFiscalService {
-    //Criando as instancias dos repositórios para usar os dados que ja temos nos arrays
-    notaFiscalRepository: NotaFiscalRepository = NotaFiscalRepository.getInstance();
-    clienteRepository: ClienteRepository = ClienteRepository.getInstance();
-    vendedorRepository: VendedorRepository = VendedorRepository.getInstance();
-    CarroRepository: CarroRepository = CarroRepository.getInstance();
-    EstoqueRepository: EstoqueRepository = EstoqueRepository.getInstance();
+    private notaFiscalRepository = NotaFiscalRepository.getInstance();
+    private clienteRepository = ClienteRepository.getInstance();
+    private vendedorRepository = VendedorRepository.getInstance();
+    private carroRepository = CarroRepository.getInstance();
+    private estoqueRepository = EstoqueRepository.getInstance();
 
-    //Criar a nota fiscal 
-    emitirNota(dados: any): NotaFiscal {
+    // emitir a nota fiscal
+    async emitirNota(dados: any): Promise<NotaFiscal> {
 
-        //Valida o numero da nota, que é obrigatório e unico 
-        if(!dados.numero_nota){
-            throw new Error("Número da nota é obrigatório");
+        //Se o número da nota não for fornecido, lança um erro
+        if (!dados.numero_nota) {
+            throw {
+                status: 400,
+                message: "Número da nota é obrigatório."
+            };
+        }
+        // Campos obrigatórios
+        if (
+            !dados.numero_nota ||
+            !dados.data_emissao ||
+            dados.valor_total == null ||
+            !dados.id_cliente ||
+            !dados.id_vendedor ||
+            !dados.id_carro
+        ) {
+            throw {
+                status: 400,
+                message: "Dados obrigatórios incompletos."
+            };
         }
 
-        //Verificando se o numero da nota já existe 
-        if(this.notaFiscalRepository.filtrarNotaPorNumero(dados.numero_nota)){
-            throw new Error("Número da nota já existe");
+        // Número da nota duplicado
+        const notaExistente =
+            await this.notaFiscalRepository.buscarPorNumero(dados.numero_nota);
+
+        if (notaExistente) {
+            throw {
+                status: 409,
+                message: "Número da nota já cadastrado."
+            };
         }
 
-        //valor_total positivo e maior que zero 
-        if(!dados.valor_total || dados.valor_total <= 0){
-            throw new Error("Valor total deve ser maior que zero");
+        // Cliente existe? Se não existir, lança erro
+        const cliente =
+            await this.clienteRepository.buscarClientePorId(dados.id_cliente);
+
+        if (!cliente) {
+            throw {
+                status: 404,
+                message: "Cliente não encontrado."
+            };
         }
 
-        //Validando campos obrigatorios (id_cliente, id_vendedor, id_carro)
-        if(!dados.id_cliente || !dados.id_vendedor || !dados.id_carro){
-            throw new Error("Cliente, vendedor e carro são obrigátorios");
+        // Vendedor existe? Se não existir, lança erro
+        const vendedor =
+            await this.vendedorRepository.buscarVendedorPorId(dados.id_vendedor);
+
+        if (!vendedor) {
+            throw {
+                status: 404,
+                message: "Vendedor não encontrado."
+            };
         }
 
-        //*Devem referenciar registros existente - verificação cliente, vendedor e carro 
+        // Carro existe? Se não existir, lança erro
+        const carro =
+            await this.carroRepository.buscarCarroPorId(dados.id_carro);
 
-        //Verificando se o cliente existe
-        const cliente = this.clienteRepository.listarClientePorId(dados.id_cliente); //usando o const para conseguir verificar se veio undefined ou não 
-        if(!cliente){
-            throw new Error("Cliente não encontrado");
+        if (!carro) {
+            throw {
+                status: 404,
+                message: "Carro não encontrado."
+            };
         }
 
-        //Verificando se o vendedor existe
-        const vendedor = this.vendedorRepository.filtraVendedorPorId(dados.id_vendedor);
-        if(!vendedor){
-            throw new Error("Vendedor não encontrado");
+        // Valor total deve ser maior que zero
+        if (Number(dados.valor_total) <= 0) {
+            throw {
+                status: 400,
+                message: "Valor total deve ser maior que zero."
+            };
         }
 
-        //Verificando se o carro existe
-        const carro = this.CarroRepository.listarPorId(dados.id_carro);
-        if(!carro){
-            throw new Error("Carro não encontrado");
+        // Data de emissão não pode ser futura
+        const data = new Date(dados.data_emissao);
+        const hoje = new Date();
+
+        if (data > hoje) {
+            throw {
+                status: 400,
+                message: "A data de emissão não pode ser futura."
+            };
         }
 
-        //Verificando o estoque do carro 
-        const estoque = this.EstoqueRepository.filtraEstoquePorCarro(dados.id_carro);
-        if(!estoque || estoque.quantidade <=0){
-            throw new Error("Carro sem estoque disponível");
+        // Estoque do carro deve ser verificado antes de emitir a nota
+        const estoque =
+            await this.estoqueRepository.buscarEstoquePorCarro(dados.id_carro);
+
+        if (!estoque) {
+            throw {
+                status: 404,
+                message: "Não existe estoque para este carro."
+            };
         }
 
-        //data da emissão não pode ser data futura 
-        const data_emissao = new Date(dados.data_emissao); //converte a requisão que veio para Date
-        if(data_emissao > new Date()){
-            throw new Error ("Data de emissão não pode ser uma data futura");
+        if (estoque.quantidade <= 0) {
+            throw {
+                status: 400,
+                message: "Carro indisponível em estoque."
+            };
         }
 
-        //ao emetir a quantidade do estoque é automaticamente decrementada
-        estoque.quantidade -= 1; 
-
-        //Criando a nota fiscal 
-        const nota = new NotaFiscal (
+        const nota = new NotaFiscal(
+            null,
             dados.numero_nota,
-            data_emissao,
-            dados.valor_total,
-            cliente,
-            vendedor,
-            carro
+            data,
+            Number(dados.valor_total),
+            dados.id_cliente,
+            dados.id_vendedor,
+            dados.id_carro
         );
 
-        this.notaFiscalRepository.insereNotaFiscal(nota);
-        return nota;
+        const notaInserida =
+            await this.notaFiscalRepository.inserir(nota);
+
+        // Atualiza estoque após a venda
+        await this.estoqueRepository.decrementarQuantidade(dados.id_carro);
+
+        return notaInserida;
     }
 
-    //Nota fiscal não pode ser removida após a emissao 
-    deletarNota(id_nota: number): void { 
-       throw new Error("Nota fiscal não pode ser deletada após a emissão!!");
-    }
-
-    //*NotaFiscal[] para retornar vários registros se houver 
-        
-    //listar notas por cliente especifico 
-    listarNotasPorCliente(id_cliente: number): NotaFiscal[]{
-        return this.notaFiscalRepository.filtrarNotasCliente(id_cliente);
-    }
-
-    //listar notas por vendedor especifico
-    listarNotasPorVendedor(id_vendedor: number): NotaFiscal[]{
-        return this.notaFiscalRepository.filtrarNotasVendedor(id_vendedor);
-    }
-
-    //listar notas por carro especifico
-    listarNotasPorCarro(id_carro: number): NotaFiscal[]{
-        return this.notaFiscalRepository.filtrarNotasCarro(id_carro);
-    }
-
-    //listar todas as notas fiscais
-    listarNotas(): NotaFiscal[]{
-        return this.notaFiscalRepository.listarNotasFiscais();
-    }
-
-    //buscar nota por id
-    buscarNotaPorId(id_nota: number): NotaFiscal {
-        const nota = this.notaFiscalRepository.filtraNotaPorId(id_nota);
-
-        if(!nota){
-            throw new Error("Nota fiscal não encontrada");
+    // Buscar por ID
+    async buscarNotaPorId(id_nota: number): Promise<NotaFiscal> {
+        const nota = await this.notaFiscalRepository.buscarPorId(id_nota);
+        if (!nota) {
+            throw {
+                status: 404,
+                message: "Nota fiscal não encontrada."
+            };
         }
         return nota;
+    }
+
+    //Listar todas as notas fiscais
+    async listarNotas(): Promise<NotaFiscal[]> {
+        return await this.notaFiscalRepository.buscarTodas();
+    }
+
+    //Listar notas fiscais por cliente
+    async listarNotasPorCliente(id_cliente: number): Promise<NotaFiscal[]> {
+        // Verifica se o cliente existe
+        const cliente = await this.clienteRepository.buscarClientePorId(id_cliente);
+        if (!cliente) {
+            throw {
+                status: 404,
+                message: "Cliente não encontrado."
+            };
+        }
+        return await this.notaFiscalRepository.buscarPorCliente(id_cliente);
+    }
+
+    //Listar notas fiscais por vendedor
+    async listarNotasPorVendedor(id_vendedor: number): Promise<NotaFiscal[]> {
+        // Verifica se o vendedor existe
+        const vendedor = await this.vendedorRepository.buscarVendedorPorId(id_vendedor);
+        if (!vendedor) {
+            throw {
+                status: 404,
+                message: "Vendedor não encontrado."
+            };
+        }
+        return await this.notaFiscalRepository.buscarPorVendedor(id_vendedor);
+    }
+
+    //Listar notas fiscais por carro
+    async listarNotasPorCarro(id_carro: number): Promise<NotaFiscal[]> {
+        // Verifica se o carro existe
+        const carro = await this.carroRepository.buscarCarroPorId(id_carro);
+        if (!carro) {
+            throw {
+                status: 404,
+                message: "Carro não encontrado."
+            };
+        }
+        return await this.notaFiscalRepository.buscarPorCarro(id_carro);
+    }
+
+    // Nota fiscal não pode ser removida após a emissão
+    async deletarNota(id_nota: number): Promise<void> {
+
+        const nota = await this.notaFiscalRepository.buscarPorId(id_nota);
+
+        if (!nota) {
+            throw {
+                status: 404,
+                message: "Nota fiscal não encontrada."
+            };
+        }
+
+        throw {
+            status: 400,
+            message: "Nota fiscal não pode ser deletada após a emissão."
+        };
     }
 }
