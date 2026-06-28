@@ -19,5 +19,8 @@
     "express": "^5.2.1",
     "mysql2": "^3.22.5",
     "typescript": "^5.9.3"
+  },
+  "devDependencies": {
+    "ts-node": "^10.9.2"
   }
 }

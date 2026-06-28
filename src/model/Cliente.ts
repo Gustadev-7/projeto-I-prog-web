@@ -1,7 +1,7 @@
 export class Cliente{
     // declara + recebe + atribui de uma vez - gera id pelo banco
     constructor(
-        public id_cliente: Number | null,
+        public id_cliente: number | null,
         public nome: string,
         public cpf: string,
         public telefone: string,

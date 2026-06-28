@@ -14,7 +14,7 @@ export class ClienteService {
         if (!dados.nome || !dados.cpf || !dados.telefone) {
             throw {
                 status: 400,
-                message: "Dados obrigatórios incompletos."
+                messagem: "Dados obrigatórios incompletos."
             };
         }
 
@@ -24,7 +24,7 @@ export class ClienteService {
         if (clienteExistente) {
             throw {
                 status: 409,
-                message: "CPF já cadastrado."
+                messagem: "CPF já cadastrado."
             };
         }
 
@@ -48,7 +48,7 @@ export class ClienteService {
         if (!cliente) {
             throw {
                 status: 404,
-                message: "Cliente não encontrado."
+                messagem: "Cliente não encontrado."
             };
         }
 
@@ -63,7 +63,7 @@ export class ClienteService {
         if (!cliente) {
             throw {
                 status: 404,
-                message: "Cliente não encontrado."
+                messagem: "Cliente não encontrado."
             };
         }
 
@@ -82,7 +82,7 @@ export class ClienteService {
         if (!cliente) {
             throw {
                 status: 404,
-                message: "Cliente não encontrado."
+                messagem: "Cliente não encontrado."
             };
         }
 
@@ -91,7 +91,7 @@ export class ClienteService {
         if (!notas || notas.length === 0) {
             throw {
                 status: 404,
-                message: "Nenhuma nota fiscal encontrada para este cliente."
+                messagem: "Nenhuma nota fiscal encontrada para este cliente."
             };
         }
 
@@ -111,7 +111,7 @@ export class ClienteService {
         if (!clienteExistente) {
             throw {
                 status: 404,
-                message: "Cliente não encontrado."
+                messagem: "Cliente não encontrado."
             };
         }
 
@@ -129,7 +129,7 @@ export class ClienteService {
             ) {
                 throw {
                     status: 409,
-                    message: "CPF já cadastrado para outro cliente."
+                    messagem: "CPF já cadastrado para outro cliente."
                 };
             }
         }
@@ -143,7 +143,7 @@ export class ClienteService {
         if (!clienteAtualizado) {
             throw {
                 status: 404,
-                message: "Cliente não encontrado."
+                messagem: "Cliente não encontrado."
             };
         }
 
@@ -159,7 +159,7 @@ export class ClienteService {
         if (!cliente) {
             throw {
                 status: 404,
-                message: "Cliente não encontrado."
+                messagem: "Cliente não encontrado."
             };
         }
 
@@ -169,8 +169,8 @@ export class ClienteService {
 
         if (notas.length > 0) {
             throw {
-                status: 409,
-                message: "Cliente possui notas fiscais associadas."
+                status: 422,
+                messagem: "Cliente possui notas fiscais associadas."
             };
         }
 
