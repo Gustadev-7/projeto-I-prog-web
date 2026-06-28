@@ -48,7 +48,7 @@ export class CarroRepository {
         const linhas = await executarComandoSQL(`SELECT * FROM carros`, []); // SELECT retorna array de objetos puros (JSON), não instâncias de Carro
 
         return linhas.map((l: any)=> // map percorre cada linha e converte para objeto Carro
-            new Carro(l.id_carro, l.marca, l.modelo, l.ano, l.placa, l.preco, l.cor)
+            new Carro(l.id_carro, l.marca, l.modelo, l.ano, l.placa, Number(l.preco), l.cor)
     );
 }
 
@@ -59,7 +59,7 @@ export class CarroRepository {
         );
         if (linhas.length === 0) return null; // SELECT sempre retorna array, se vazio não encontrou
         const l = linhas[0];   // pega o primeiro (e único) elemento do array
-        return new Carro(l.id_carro, l.marca, l.modelo, l.ano, l.placa, l.preco, l.cor);
+        return new Carro(l.id_carro, l.marca, l.modelo, l.ano, l.placa, Number(l.preco), l.cor);
     }
 
     //Busca por placa para validar 
@@ -69,7 +69,7 @@ export class CarroRepository {
         );
         if(linhas.length === 0) return null; // placa não encontrada
         const l = linhas[0];
-        return new Carro(l.id_carro, l.marca, l.modelo, l.ano, l.placa, l.preco, l.cor);
+        return new Carro(l.id_carro, l.marca, l.modelo, l.ano, l.placa, Number(l.preco), l.cor);
     }
 
     // Função para atualizar o apenas com as propriedades que foram enviadas no corpo da requisição
@@ -91,7 +91,7 @@ export class CarroRepository {
     async deletarCarro(id_carro: number): Promise<Carro | null> {
         const carro = await this.buscarCarroPorId(id_carro);
         if(!carro) return null;
-        await executarComandoSQL(`DELETE FROM carro WHERE id_carro = ?`, [id_carro]);  // remove do banco
+        await executarComandoSQL(`DELETE FROM carros WHERE id_carro = ?`, [id_carro]);  // remove do banco
         return carro;
     }
 }
