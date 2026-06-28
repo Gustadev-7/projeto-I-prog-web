@@ -8,7 +8,7 @@ export class ClienteService {
     NotaFiscalRepository: NotaFiscalRepository = NotaFiscalRepository.getInstance();
 
     //Criando cliente 
-    cadastrarCliente(dados: any): Cliente {
+    criarCliente(dados: any): Cliente {
 
         //Validação dos dados obrigatórios
         if(!dados.nome || !dados.CPF || !dados.telefone ){
