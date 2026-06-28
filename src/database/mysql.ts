@@ -47,7 +47,7 @@ export function executarComandoSQL(query: string, valores: any[]): Promise<any> 
 }
 
 // Função para inicializar o banco de dados e sincronizar os repositórios
-export async function inicilizarBanco(): Promise<void> {
+export async function inicializarBanco(): Promise<void> {
     console.log('Sincronizando o banco de dados'); // Exibe uma mensagem no console indicando que a sincronização do banco de dados está em andamento
     // Cria um array contendo as queries de criação das tabelas para cada repositório
     const schemas = [
