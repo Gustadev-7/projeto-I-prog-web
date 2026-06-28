@@ -1,125 +1,117 @@
 import { Request, Response } from "express";
 import { EstoqueService } from "../services/estoqueService";
 
+export class EstoqueController {
 //criando constante para acessar os dados de estoque
-const estoqueService = new EstoqueService();
+private estoqueService = new EstoqueService();
 
 //POST - cadastrar estoque
-export function cadastrarEstoque(req: Request, res: Response): void {
+    async cadastrarEstoque(req: Request, res: Response){
     try {
-        //usando os dados da requisição e enviando para o service para cadastrar
-        const estoque = estoqueService.cadastrarEstoque(req.body);
+        // await aguarda a Promise do service resolver (operação no banco)
+        const estoque = await this.estoqueService.cadastrarEstoque(req.body);
 
-        //se deu certo, retorna status 201 e mensagem de sucesso
-        res.status(201).json({
-            mensagem: "Estoque cadastrado com sucesso",
-            estoque
-        });
+        //se deu certo, retorna status 201 com o estoque já com id gerado pelo banco
+        return res.status(201).json(estoque);
 
-    } catch (e: any) {
-        res.status(e.status || 500).json({
-            mensagem: e.message
-        });
+    } catch (error: any) {
+        res.status(error.status ?? 500);
+        return res.json({ erro: error.mensagem ?? "Erro interno do servidor." });
+        };
+    }
+
+    //GET - listar estoque
+async listarEstoque(req: Request, res: Response){
+    try {
+        //await aguarda retornar o array de estoques 
+        const estoques = await this.estoqueService.listarEstoque();
+
+        // deu certo → retorna 200 com a lista de estoques
+        return res.status(200).json(estoques);
+
+    } catch (error: any) {
+        res.status(error.status ?? 500);
+        return res.json({ erro: error.mensagem ?? "Erro interno do servidor."});
     }
 }
+ 
 
 //GET - Buscar estoque por id
-export function buscarEstoque(req: Request, res: Response): void {
+async buscarEstoque(req: Request, res: Response){
     try {
         //extrai o id dos parâmetros da requisição
         const id_estoque = Number(req.params.id_estoque);
 
-        const estoque = estoqueService.buscarEstoque(id_estoque);
+        // await aguarda o banco retornar o estoque
+        const estoque = await this.estoqueService.buscarEstoque(id_estoque);
 
-        res.status(200).json({
-            mensagem: "Estoque encontrado com sucesso",
-            estoque
-        });
+        // deu certo, retorna 200 com o estoque encontrado
+        return res.status(200).json(estoque);
 
-    } catch (e: any) {
-        res.status(e.status || 500).json({
-            mensagem: e.message
-        });
+    } catch (error: any) {
+        res.status(error.status ?? 500);
+        return res.json({ erro: error.mensagem ?? "Erro interno do servidor."});
     }
 }
 
 //GET - Buscar estoque por carro
-export function buscarEstoquePorCarro(req: Request, res: Response): void {
+async buscarEstoquePorCarro(req: Request, res: Response){
     try {
         //extrai o id dos parâmetros da requisição
         const id_carro = Number(req.params.id_carro);
 
-        const estoque = estoqueService.buscarEstoquePorCarro(id_carro);
+        // await aguarda o banco retornar o estoque do carro
+        const estoque = await this.estoqueService.buscarEstoquePorCarro(id_carro);
 
-        res.status(200).json({
-            mensagem: "Estoque encontrado com sucesso",
-            estoque
-        });
+        //deu certo, retorna 200 com o estoque encontrado
+        return res.status(200).json(estoque);
 
-    } catch (e: any) {
-        res.status(e.status || 500).json({
-            mensagem: e.message
-        });
-    }
+    } catch (error: any) {
+        res.status(error.status ?? 500);
+        return res.json({ erro: error.mensagem ?? "Erro interno do servidor."})
+}
+
 }
 
 //PUT - atualizar estoque
-export function atualizarEstoque(req: Request, res: Response): void {
+async atualizarEstoque(req: Request, res: Response){
     try {
         //extrai o id dos parâmetros da requisição
         const id_estoque = Number(req.params.id_estoque);
 
-        const estoque = estoqueService.atualizarEstoque(
+        // await aguarda o banco atualizar e retornar o estoque atualizado
+        const estoque = await this.estoqueService.atualizarEstoque(
             id_estoque,
-            req.body
+            req.body //apenas os campos que quer atualizar
         );
 
-        res.status(200).json({
-            mensagem: "Estoque atualizado com sucesso!",
-            estoque
-        });
+        //retorna 200 com o estoque atualizado
+        return res.status(200).json(estoque);
 
-    } catch (e: any) {
-        res.status(e.status || 500).json({
-            mensagem: e.message
-        });
-    }
-}
-
-//GET - listar estoque
-export function listarEstoque(req: Request, res: Response): void {
-    try {
-        //chama o serviço para listar o estoque
-        const estoques = estoqueService.listarEstoque();
-
-        res.status(200).json({
-            mensagem: "Estoque listado com sucesso",
-            estoques
-        });
-
-    } catch (e: any) {
-        res.status(e.status || 500).json({
-            mensagem: e.message
-        });
+    } catch (error: any) {
+        res.status(error.status ?? 500);
+        return res.json({ erro: error.mensagem ?? "Erro interno do servidor."});
     }
 }
 
 //DELETE - deletar estoque
-export function deletarEstoque(req: Request, res: Response): void {
+async deletarEstoque(req: Request, res: Response){
     try {
         //extrai o id do estoque dos parâmetros da requisição
         const id_estoque = Number(req.params.id_estoque);
 
-        //chama o service para deletar o estoque
-        estoqueService.deletarEstoque(id_estoque);
+        // await aguarda o banco deletar o estoque
+        await this.estoqueService.deletarEstoque(id_estoque);
 
-        res.status(200).json({
+         // deu certo → retorna 200 com mensagem de sucesso
+        return res.status(200).json({
             mensagem: "Estoque deletado com sucesso!"
         });
 
-    } catch (e: any) {
-        res.status(e.status || 500).json({
-            mensagem: e.message
-        });
+    } catch (error: any) {
+        res.status(error.status ?? 500);
+        return res.json({ erro: error.mensagm ?? "Erro interno do servidor."});
     }
+}
+
 }
