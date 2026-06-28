@@ -17,8 +17,8 @@ async emitirNota(req: Request, res: Response){
 
         //se der errado, retorna status 400 e a mensagem de erro
     }catch(error: any){
-        res.status(error.status ?? 500);
-        return res.json({ erro: error.mensagem ?? "Erro interno do servidor."});
+        const status = error.status ?? 500;
+        return res.status(status).json({ erro: error.mensagem ?? "Erro interno do servidor."});
     }
 }
 
@@ -31,8 +31,8 @@ async listarNotas(req: Request, res: Response){
         return res.status(200).json(notas);
 
     }catch(error: any){
-        res.status(error.status ?? 500);
-        return res.json({ erro: error.mensagem ?? "Erro interno do servidor."})
+        const status = error.status ?? 500;
+        return res.status(status).json({ erro: error.mensagem ?? "Erro interno do servidor."})
     }
 }
 
@@ -49,8 +49,8 @@ async buscarNotaPorId(req: Request, res: Response){
         return res.status(200).json(nota);
 
     }catch(error: any){
-        res.status(error.status ?? 500);
-        return res.json({ erro: error.mensagem ?? "Erro interno do servidor."});
+        const status = error.status ?? 500;
+        return res.status(status).json({ erro: error.mensagem ?? "Erro interno do servidor."});
 
     }
 }
@@ -67,8 +67,8 @@ async listarNotasPorCliente(req: Request, res: Response){
         return res.status(200).json(notas);
 
     }catch(error: any){
-        res.status(error.status ?? 500);
-        return res.json({ erro: error.mensagem ?? "Erro interno do servidor."});
+        const status = error.status ?? 500;
+        return res.status(status).json({ erro: error.mensagem ?? "Erro interno do servidor."});
     }
 }
 
@@ -85,8 +85,8 @@ async listarNotasPorVendedor(req: Request, res: Response){
         return res.status(200).json(notas);
 
     }catch(error: any){
-        res.status(error.status ?? 500);
-        return res.json({ erro: error.mensagem ?? "Erro interno do servidor."});
+        const status = error.status ?? 500;
+        return res.status(status).json({ erro: error.mensagem ?? "Erro interno do servidor."});
     }
 }
 

@@ -15,7 +15,7 @@ private estoqueService = new EstoqueService();
         return res.status(201).json(estoque);
 
     } catch (error: any) {
-        res.status(error.status ?? 500);
+        const status = error.status ?? 500;
         return res.json({ erro: error.mensagem ?? "Erro interno do servidor." });
         };
     }
@@ -30,7 +30,7 @@ async listarEstoque(req: Request, res: Response){
         return res.status(200).json(estoques);
 
     } catch (error: any) {
-        res.status(error.status ?? 500);
+        const status = error.status ?? 500;
         return res.json({ erro: error.mensagem ?? "Erro interno do servidor."});
     }
 }
@@ -49,7 +49,7 @@ async buscarEstoque(req: Request, res: Response){
         return res.status(200).json(estoque);
 
     } catch (error: any) {
-        res.status(error.status ?? 500);
+        const status = error.status ?? 500;
         return res.json({ erro: error.mensagem ?? "Erro interno do servidor."});
     }
 }
@@ -67,10 +67,9 @@ async buscarEstoquePorCarro(req: Request, res: Response){
         return res.status(200).json(estoque);
 
     } catch (error: any) {
-        res.status(error.status ?? 500);
-        return res.json({ erro: error.mensagem ?? "Erro interno do servidor."})
-}
-
+        const status = error.status ?? 500;
+        return res.json({ erro: error.mensagem ?? "Erro interno do servidor."});
+    }
 }
 
 //PUT - atualizar estoque
@@ -89,7 +88,7 @@ async atualizarEstoque(req: Request, res: Response){
         return res.status(200).json(estoque);
 
     } catch (error: any) {
-        res.status(error.status ?? 500);
+        const status = error.status ?? 500;
         return res.json({ erro: error.mensagem ?? "Erro interno do servidor."});
     }
 }
@@ -109,8 +108,8 @@ async deletarEstoque(req: Request, res: Response){
         });
 
     } catch (error: any) {
-        res.status(error.status ?? 500);
-        return res.json({ erro: error.mensagm ?? "Erro interno do servidor."});
+        const status = error.status ?? 500;
+        return res.json({ erro: error.mensagem ?? "Erro interno do servidor."});
     }
 }
 
