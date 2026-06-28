@@ -1,10 +1,12 @@
 import { Carro } from '../model/Carro';
 import { CarroRepository } from '../repositories/carroRepository';
+import { EstoqueRepository } from '../repositories/estoqueRepository';
+import { Estoque } from '../model/Estoque';
 
 export class CarroService {
 
     carroRepository: CarroRepository = CarroRepository.getInstance();
-
+    estoqueRepository: EstoqueRepository = EstoqueRepository.getInstance();
     //cadastrar carro
     async cadastrarCarro(dados: any): Promise<Carro> {
 
@@ -86,6 +88,32 @@ export class CarroService {
     async listarCarros(): Promise<Carro[]> {
         return await this.carroRepository.buscarTodoCarros();
     }
+
+    //Listar carros disponíveis
+    async listarCarrosDisponiveis(): Promise<Carro[]> {
+
+    const carros = await this.carroRepository.buscarTodoCarros();
+
+    const estoques = await this.estoqueRepository.buscarTodosEstoque();
+
+    const carrosDisponiveis = carros.filter(carro => {
+
+        const estoque = estoques.find(
+            (e: Estoque) => e.id_carro === carro.id_carro
+        );
+
+        return estoque && estoque.quantidade > 0;
+    });
+
+    if (carrosDisponiveis.length === 0) {
+        throw {
+            status: 404,
+            message: "Nenhum carro disponível encontrado."
+        };
+    }
+
+    return carrosDisponiveis;
+}
 
     //atualizar carro
     async atualizarCarro(id_carro: number, dadosAtualizados: any): Promise<Carro> {
