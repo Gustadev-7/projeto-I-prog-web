@@ -1,103 +1,108 @@
 import {Request, Response} from "express";
 import {NotaFiscalService} from "../services/notaFiscalService";
 
+export class NotaFiscalController{
+
 //Instancia do service para usar os metodos 
-const notaFiscalService = new NotaFiscalService();
+private notaFiscalService = new NotaFiscalService();
 
 //POST - emitir nota fiscal
-export function emitirNota(req: Request, res: Response){
+async emitirNota(req: Request, res: Response){
     try{
-        //usando os dados da requisição 
-        const novaNota = notaFiscalService.emitirNota(req.body);
+        //usando os dados da requisição await aguarda a Promise do service resolver (operação no banco)
+        const novaNota = await this.notaFiscalService.emitirNota(req.body);
 
-        //deu certo, retorna status 201
-        res.status(201).json({
-            message: "Nota fiscal emitida com sucesso!", 
-            notaFiscal: novaNota //retorna
-        });
-    }catch(e: unknown){
-        const mensagem = (e as Error).message;
-        if(mensagem.includes("Cliente não encontrado")){
-            res.status(404).json({message: mensagem});
-        } else if(mensagem.includes("Vendedor não encontrado")){
-            res.status(404).json({message: mensagem});
-        }
-    }
-}
+        //deu certo, retorna status 201 com a nota já com id gerado pelo banco
+        return res.status(201).json(novaNota);
 
-//GET - Listar notas por cliente 
-export function listarNotasPorCliente(req: Request, res: Response){
-    try{
-
-        const id_cliente = Number(req.params.id);
-
-        const notas =
-            notaFiscalService.listarNotasPorCliente(id_cliente);
-
-        res.status(200).json(notas);
-
-    }catch(e: unknown){
-
-        res.status(400).json({
-            mensagem: (e as Error).message
-        });
-    }
-}
-
-//GET - listar notas por vendedor 
-export function listarNotasPorVendedor(req: Request, res: Response){
-    try{
-        //recebe dados da requisção (query por ser filtro - pode vir ou não)
-        const id_vendedor = Number(req.params.id);
-
-         //retorna um array de notas fiscais do client 
-        const notas = notaFiscalService.listarNotasPorVendedor(id_vendedor);
-
-        res.status(200).json(notas);
-    }catch(e: unknown){
-        res.status(400).json({messagem: (e as Error).message});
+        //se der errado, retorna status 400 e a mensagem de erro
+    }catch(error: any){
+        res.status(error.status ?? 500);
+        return res.json({ erro: error.mensagem ?? "Erro interno do servidor."});
     }
 }
 
 //GET - listar todas as notas fiscais 
-export function listarNotas(req: Request, res: Response){
+async listarNotas(req: Request, res: Response){
     try{
         //acessa repositorio de notas e retorna todas
-        const notas = notaFiscalService.listarNotas();
+        const notas = await this.notaFiscalService.listarNotas();
 
-        res.status(200).json(notas);
-    }catch(e: unknown){
-        res.status(400).json({mensagem: (e as Error).message});
+        return res.status(200).json(notas);
+
+    }catch(error: any){
+        res.status(error.status ?? 500);
+        return res.json({ erro: error.mensagem ?? "Erro interno do servidor."})
     }
 }
 
 //GET - buscar nota por id
-export function buscarNotaPorId(req: Request, res: Response){
+async buscarNotaPorId(req: Request, res: Response){
     try{
         //recebe o id da nota pelos parâmetros da URL
         const id_nota = Number(req.params.id_nota);
 
-        //busca a nota usando o service
-        const nota = notaFiscalService.buscarNotaPorId(id_nota);
+        // await aguarda o banco retornar a nota
+        const nota = await this.notaFiscalService.buscarNotaPorId(id_nota);
 
-        res.status(200).json(nota);
-    }catch(e: unknown){
-        res.status(400).json({mensagem: (e as Error).message});
+        //deu certo, retorna status 200 com a nota encontrada
+        return res.status(200).json(nota);
+
+    }catch(error: any){
+        res.status(error.status ?? 500);
+        return res.json({ erro: error.mensagem ?? "Erro interno do servidor."});
+
+    }
+}
+
+
+//GET - Listar notas por cliente 
+async listarNotasPorCliente(req: Request, res: Response){
+    try{
+
+        const id_cliente = Number(req.params.id);
+
+        const notas =await this.notaFiscalService.listarNotasPorCliente(id_cliente);
+
+        return res.status(200).json(notas);
+
+    }catch(error: any){
+        res.status(error.status ?? 500);
+        return res.json({ erro: error.mensagem ?? "Erro interno do servidor."});
+    }
+}
+
+//GET - listar notas por vendedor 
+async listarNotasPorVendedor(req: Request, res: Response){
+    try{
+        //recebe dados da requisção convertendo para number 
+        const id_vendedor = Number(req.params.id);
+
+        // await aguarda o banco retornar as notas do vendedor 
+        const notas = await this.notaFiscalService.listarNotasPorVendedor(id_vendedor);
+
+        //retorna 200 com o array de notas
+        return res.status(200).json(notas);
+
+    }catch(error: any){
+        res.status(error.status ?? 500);
+        return res.json({ erro: error.mensagem ?? "Erro interno do servidor."});
     }
 }
 
 //DELETE - deletar nota fiscal 
-export function deletarNota(req: Request, res: Response){
+async deletarNota(req: Request, res: Response){
     try{
         //usando o id que vem na URL
         const id_nota = Number(req.params.id_nota);
 
         //sempre teremos o erro, pois não podemos deletar nota
-        notaFiscalService.deletarNota(id_nota)
-    }catch (e: unknown){
-        const mensagem = (e as Error).message;
-        if(mensagem.includes("Nota fiscal não encontrada")){
-            res.status(422).json({message: mensagem});
-        }      
+       await this.notaFiscalService.deletarNota(id_nota);
+
+    }catch (error: any){
+        const status = error.status ?? 422;
+        return res.status(status).json({ erro: error.mensagem ?? "Erro interno do servidor."});  
     }
+}
+
 }
