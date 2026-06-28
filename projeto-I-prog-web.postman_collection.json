@@ -1,20 +1,20 @@
 {
   "info": {
-    "_postman_id": "9f326fd5-ee50-43ed-84e6-2420dff9b6a4",
+    "_postman_id": "c570e545-f1a8-4668-8b5e-8ea20a1c264d",
     "name": "projeto-I-prog-web",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-    "_exporter_id": "54272957",
-    "_collection_link": "https://go.postman.co/collection/54272957-9f326fd5-ee50-43ed-84e6-2420dff9b6a4?source=collection_link"
+    "_exporter_id": "54272960",
+    "_collection_link": "https://go.postman.co/collection/54272960-c570e545-f1a8-4668-8b5e-8ea20a1c264d?source=collection_link"
   },
   "item": [
     {
-      "name": "Cadastrar Vendedor",
+      "name": "cadastrar vendedor",
       "request": {
         "method": "POST",
         "header": [],
         "body": {
           "mode": "raw",
-          "raw": "{\r\n    \"nome\": \"Carla\",\r\n    \"matricula\": \"VZN-022\",\r\n    \"comissao_percentual\": 3\r\n}",
+          "raw": "{\r\n    \"nome\": \"Maria \",\r\n    \"matricula\": \"VND-001\",\r\n    \"comissao_percentual\": 5.0\r\n}",
           "options": {
             "raw": {
               "language": "json"
@@ -36,13 +36,13 @@
       "response": []
     },
     {
-      "name": "Cadastrar Cliente",
+      "name": "cadastrar cliente",
       "request": {
         "method": "POST",
         "header": [],
         "body": {
           "mode": "raw",
-          "raw": "{\r\n    \"nome\": \"Jonas\",\r\n    \"CPF\": \"123.456.789-43\",\r\n    \"telefone\": \"(11) 9999-5555\",\r\n    \"email\": \"jonas@email.com\",\r\n    \"cidade\": \"Boituva\"\r\n}",
+          "raw": "{\r\n    \"nome\": \"João da Silva\",\r\n    \"cpf\": \"123.456.789-00\",\r\n    \"telefone\": \"(11) 9999-0000\",\r\n    \"email\": \"joao@email.com\",\r\n    \"cidade\": \"São Paulo\"\r\n}",
           "options": {
             "raw": {
               "language": "json"
@@ -64,13 +64,13 @@
       "response": []
     },
     {
-      "name": "Cadastrar Carro",
+      "name": "cadastrar carros",
       "request": {
         "method": "POST",
         "header": [],
         "body": {
           "mode": "raw",
-          "raw": "{\r\n    \"marca\": \"Honda\",\r\n    \"modelo\": \"Civic\",\r\n    \"ano\": 2022,\r\n    \"placa\": \"SEA-6321\",\r\n    \"preco\": 90000.00,\r\n    \"cor\": \"Branca\"\r\n}",
+          "raw": "{\r\n    \"marca\": \"Toyota\",\r\n    \"modelo\": \"RAV4\",\r\n    \"ano\": 2026,\r\n    \"placa\": \"ADD-15634\",\r\n    \"preco\": 120000.00,\r\n    \"cor\": \"Azul\"\r\n}",
           "options": {
             "raw": {
               "language": "json"
@@ -92,7 +92,7 @@
       "response": []
     },
     {
-      "name": "Cadastrar Estoque",
+      "name": "cadastrar estoque",
       "request": {
         "method": "POST",
         "header": [],
@@ -120,7 +120,7 @@
       "response": []
     },
     {
-      "name": "Emitir Nota Fiscal",
+      "name": "emitir nota fiscal",
       "request": {
         "method": "POST",
         "header": [],
@@ -148,7 +148,7 @@
       "response": []
     },
     {
-      "name": "Listar Clientes",
+      "name": "listar clientes",
       "request": {
         "method": "GET",
         "header": [],
@@ -167,7 +167,7 @@
       "response": []
     },
     {
-      "name": "Listar Vendedores",
+      "name": "listar vendedores",
       "request": {
         "method": "GET",
         "header": [],
@@ -186,7 +186,7 @@
       "response": []
     },
     {
-      "name": "Listar Carros",
+      "name": "listar carros",
       "request": {
         "method": "GET",
         "header": [],
@@ -205,7 +205,7 @@
       "response": []
     },
     {
-      "name": "Listar Carros Disponíveis",
+      "name": "listar carros disponiveis",
       "protocolProfileBehavior": {
         "disableBodyPruning": true
       },
@@ -232,7 +232,7 @@
       "response": []
     },
     {
-      "name": "Listar Estoque",
+      "name": "listar estoque",
       "protocolProfileBehavior": {
         "disableBodyPruning": true
       },
@@ -258,7 +258,7 @@
       "response": []
     },
     {
-      "name": "Listar Notas",
+      "name": "listar estoque por id carro",
       "protocolProfileBehavior": {
         "disableBodyPruning": true
       },
@@ -267,33 +267,7 @@
         "header": [],
         "body": {
           "mode": "raw",
-          "raw": ""
-        },
-        "url": {
-          "raw": "http://localhost:3000/notas",
-          "protocol": "http",
-          "host": [
-            "localhost"
-          ],
-          "port": "3000",
-          "path": [
-            "notas"
-          ]
-        }
-      },
-      "response": []
-    },
-    {
-      "name": "Listar Estoque por ID do Carro",
-      "protocolProfileBehavior": {
-        "disableBodyPruning": true
-      },
-      "request": {
-        "method": "GET",
-        "header": [],
-        "body": {
-          "mode": "raw",
-          "raw": "{\r\n    \"id_carro\": 1,\r\n    \"quantidade\": 4,\r\n    \"localizacao_patio\": \"Galpao A-3\",\r\n    \"data_entrada\": \"2025-06-01\"\r\n}"
+          "raw": "{\r\n    \"id_carro\": 1780276684144,\r\n    \"quantidade\": 5,\r\n    \"localizacao_patio\": \"Galpao A-3\",\r\n    \"data_entrada\": \"2025-06-01\"\r\n}"
         },
         "url": {
           "raw": "http://localhost:3000/estoque/carro/1",
@@ -312,7 +286,33 @@
       "response": []
     },
     {
-      "name": "Listar Notas por ID",
+      "name": "listar notas",
+      "protocolProfileBehavior": {
+        "disableBodyPruning": true
+      },
+      "request": {
+        "method": "GET",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n   \"numero_nota\": \"NF-2025-0001\",\r\n   \"data_emissao\": \"2025-06-01\",\r\n   \"valor_total\": 110000.00,\r\n   \"id_cliente\": 1780278355054,\r\n   \"id_vendedor\": 1780278350401,\r\n   \"id_carro\": 1780278407147\r\n}"
+        },
+        "url": {
+          "raw": "http://localhost:3000/notas",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "3000",
+          "path": [
+            "notas"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "listar nota por id",
       "protocolProfileBehavior": {
         "disableBodyPruning": true
       },
@@ -339,171 +339,13 @@
       "response": []
     },
     {
-      "name": "Buscar Carro por ID",
-      "protocolProfileBehavior": {
-        "disableBodyPruning": true
-      },
-      "request": {
-        "method": "GET",
-        "header": [],
-        "body": {
-          "mode": "raw",
-          "raw": "{\r\n   \"numero_nota\": \"NF-2025-0001\",\r\n   \"data_emissao\": \"2025-06-01\",\r\n   \"valor_total\": 110000.00,\r\n   \"id_cliente\": 1780278355054,\r\n   \"id_vendedor\": 1780278350401,\r\n   \"id_carro\": 1780278407147\r\n}"
-        },
-        "url": {
-          "raw": "http://localhost:3000/carros/1",
-          "protocol": "http",
-          "host": [
-            "localhost"
-          ],
-          "port": "3000",
-          "path": [
-            "carros",
-            "1"
-          ]
-        }
-      },
-      "response": []
-    },
-    {
-      "name": "Buscar Vendedor por ID",
-      "request": {
-        "method": "GET",
-        "header": [],
-        "url": {
-          "raw": "http://localhost:3000/vendedores/1",
-          "protocol": "http",
-          "host": [
-            "localhost"
-          ],
-          "port": "3000",
-          "path": [
-            "vendedores",
-            "1"
-          ]
-        }
-      },
-      "response": []
-    },
-    {
-      "name": "Buscar Cliente por ID",
-      "request": {
-        "method": "GET",
-        "header": [],
-        "url": {
-          "raw": "http://localhost:3000/clientes/1",
-          "protocol": "http",
-          "host": [
-            "localhost"
-          ],
-          "port": "3000",
-          "path": [
-            "clientes",
-            "1"
-          ]
-        }
-      },
-      "response": []
-    },
-    {
-      "name": "Buscar Estoque por ID",
-      "request": {
-        "method": "GET",
-        "header": [],
-        "url": {
-          "raw": "http://localhost:3000/estoque/1",
-          "protocol": "http",
-          "host": [
-            "localhost"
-          ],
-          "port": "3000",
-          "path": [
-            "estoque",
-            "1"
-          ]
-        }
-      },
-      "response": []
-    },
-    {
-      "name": "Listar Notas do Cliente",
-      "request": {
-        "method": "GET",
-        "header": [],
-        "url": {
-          "raw": "http://localhost:3000/clientes/notas/1",
-          "protocol": "http",
-          "host": [
-            "localhost"
-          ],
-          "port": "3000",
-          "path": [
-            "clientes",
-            "notas",
-            "1"
-          ]
-        }
-      },
-      "response": []
-    },
-    {
-      "name": "Listar Notas do Vendedor",
-      "request": {
-        "method": "GET",
-        "header": [],
-        "url": {
-          "raw": "http://localhost:3000/vendedores/notas/1",
-          "protocol": "http",
-          "host": [
-            "localhost"
-          ],
-          "port": "3000",
-          "path": [
-            "vendedores",
-            "notas",
-            "1"
-          ]
-        }
-      },
-      "response": []
-    },
-    {
-      "name": "Atualizar Carro",
+      "name": "atualizar cliente",
       "request": {
         "method": "PUT",
         "header": [],
         "body": {
           "mode": "raw",
-          "raw": "{\r\n    \"preco\": 75000,\r\n    \"cor\": \"Prata\"\r\n}",
-          "options": {
-            "raw": {
-              "language": "json"
-            }
-          }
-        },
-        "url": {
-          "raw": "http://localhost:3000/carros/1",
-          "protocol": "http",
-          "host": [
-            "localhost"
-          ],
-          "port": "3000",
-          "path": [
-            "carros",
-            "1"
-          ]
-        }
-      },
-      "response": []
-    },
-    {
-      "name": "Atualizar Cliente",
-      "request": {
-        "method": "PUT",
-        "header": [],
-        "body": {
-          "mode": "raw",
-          "raw": "   {\r\n        \"nome\": \"Felipe\",\r\n        \"telefone\": \"(11) 9444-8888\",\r\n        \"cidade\": \"Tatuí\"\r\n    }",
+          "raw": "{\r\n    \"nome\": \"Maria Clara\",\r\n    \"telefone\": \"(11) 88888-0000\"\r\n}\r\n",
           "options": {
             "raw": {
               "language": "json"
@@ -526,13 +368,13 @@
       "response": []
     },
     {
-      "name": "Atualizar Vendedor",
+      "name": "atualizar vendedor",
       "request": {
         "method": "PUT",
         "header": [],
         "body": {
           "mode": "raw",
-          "raw": "    {\r\n        \"nome\": \"Patricia\",\r\n        \"comissao_percentual\": 4\r\n    }",
+          "raw": "{\r\n    \"nome\": \"Ana atualizada\",\r\n    \"comissao_percentual\": 8\r\n}\r\n",
           "options": {
             "raw": {
               "language": "json"
@@ -555,13 +397,42 @@
       "response": []
     },
     {
-      "name": "Atualizar Estoque",
+      "name": "atualizar carro",
       "request": {
         "method": "PUT",
         "header": [],
         "body": {
           "mode": "raw",
-          "raw": "    {\r\n        \"quantidade\": 8,\r\n        \"localizacao_patio\": \"Galpao B-9\"\r\n    }",
+          "raw": "{\r\n    \"cor\": \"Preto\",\r\n    \"preco\": 115000\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:3000/carros/1",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "3000",
+          "path": [
+            "carros",
+            "1"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "atualizar estoque",
+      "request": {
+        "method": "PUT",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"quantidade\": 10\r\n}",
           "options": {
             "raw": {
               "language": "json"
@@ -584,58 +455,30 @@
       "response": []
     },
     {
-      "name": "Deletar Cliente",
+      "name": "deletar estoque",
       "request": {
         "method": "DELETE",
         "header": [],
         "url": {
-          "raw": "http://localhost:3000/clientes/2",
+          "raw": "http://localhost:3000/estoque/1",
           "protocol": "http",
           "host": [
             "localhost"
           ],
           "port": "3000",
           "path": [
-            "clientes",
-            "2"
+            "estoque",
+            "1"
           ]
         }
       },
       "response": []
     },
     {
-      "name": "Deletar Vendedor",
+      "name": "deletar Carro",
       "request": {
         "method": "DELETE",
         "header": [],
-        "body": {
-          "mode": "raw",
-          "raw": "    {\r\n        \"nome\": \"Carla\",\r\n        \"comissao_percentual\": 4\r\n    }"
-        },
-        "url": {
-          "raw": "http://localhost:3000/vendedores/2",
-          "protocol": "http",
-          "host": [
-            "localhost"
-          ],
-          "port": "3000",
-          "path": [
-            "vendedores",
-            "2"
-          ]
-        }
-      },
-      "response": []
-    },
-    {
-      "name": "Deletar Carro",
-      "request": {
-        "method": "DELETE",
-        "header": [],
-        "body": {
-          "mode": "raw",
-          "raw": "{\r\n    \"preco\": 75000,\r\n    \"cor\": \"Prata\"\r\n}"
-        },
         "url": {
           "raw": "http://localhost:3000/carros/2",
           "protocol": "http",
@@ -652,19 +495,19 @@
       "response": []
     },
     {
-      "name": "Deletar Estoque",
+      "name": "deletar vendedor",
       "request": {
         "method": "DELETE",
         "header": [],
         "url": {
-          "raw": "http://localhost:3000/estoque/1",
+          "raw": "http://localhost:3000/vendedores/1",
           "protocol": "http",
           "host": [
             "localhost"
           ],
           "port": "3000",
           "path": [
-            "estoque",
+            "vendedores",
             "1"
           ]
         }
