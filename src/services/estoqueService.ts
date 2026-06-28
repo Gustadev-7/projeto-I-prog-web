@@ -1,163 +1,170 @@
-import { Estoque } from "../model/Estoque";        
+import { Estoque } from "../model/Estoque";
 import { EstoqueRepository } from "../repositories/estoqueRepository";
 import { CarroRepository } from "../repositories/carroRepository";
 
 export class EstoqueService {
-    estoqueRepository: EstoqueRepository = EstoqueRepository.getInstance();
-    carroRepository: CarroRepository = CarroRepository.getInstance();
+    private estoqueRepository = EstoqueRepository.getInstance();
+    private carroRepository = CarroRepository.getInstance();
 
-    //criando o resgistro de estoque
-    cadastrarEstoque(dados: any): Estoque {
+    // Cadastrar estoque
+    async cadastrarEstoque(dados: any): Promise<Estoque> {
 
-        //Validação dos dados obrigatórios
-        if(!dados.id_carro || dados.quantidade == null || !dados.localizacao_patio || !dados.data_entrada){
+        if (
+            dados.id_carro == null ||
+            dados.quantidade == null ||
+            !dados.localizacao_patio ||
+            !dados.data_entrada
+        ) {
             throw {
                 status: 400,
-                message: "Dados obrigatórios incompletos"
+                message: "Dados obrigatórios incompletos."
             };
         }
 
-        //verificar se o carro existe
-        const carro = this.carroRepository.listarPorId(dados.id_carro);
-
-        if(!carro){
-            throw {
-                status: 404,
-                message: "Carro não encontrado"
-            };
-        }
-
-        //quantidade deve ser maior ou igual a zero
-        if(Number(dados.quantidade) < 0){
-            throw {
-                status: 400,
-                message: "Quantidade deve ser maior ou igual a zero"
-            };
-        }
-
-        //quantidade deve ser um número inteiro
-        if(!Number.isInteger(Number(dados.quantidade))){
-            throw {
-                status: 400,
-                message: "Quantidade deve ser um número inteiro"
-            };
-        }
-
-        //validar data de entrada, não pode ser futura
-        const data_entrada = new Date(dados.data_entrada);
-        const hoje = new Date();
-
-
-        if(data_entrada > hoje){
-            throw {
-                status: 400,
-                message: "Data de entrada não pode ser futura"
-            };
-        }
-        
-        //verificar se já existe um estoque para o mesmo carro
-        const estoqueExistente = this.estoqueRepository.filtraEstoquePorCarro(dados.id_carro);
-
-        if(estoqueExistente){
-            throw {
-                status: 400,
-                message: "Já existe um estoque para este carro"
-            };
-        }
-
-        //criando o estoque com os dados da requisição
-        const estoque = new Estoque(
-            dados.id_carro,
-            dados.quantidade,
-            dados.localizacao_patio,
-            dados.data_entrada
+        const carro = await this.carroRepository.buscarCarroPorId(
+            Number(dados.id_carro)
         );
 
-        //insere no repositório
-        this.estoqueRepository.insereEstoque(estoque);
-
-        return estoque;
-    }
-
-    //buscar estoque por id
-    buscarEstoque(id_estoque: number): Estoque {
-
-        const estoque = this.estoqueRepository.filtraEstoquePorId(id_estoque);
-
-        if(!estoque){
+        if (!carro) {
             throw {
                 status: 404,
-                message: "Estoque não encontrado"
+                message: "Carro não encontrado."
+            };
+        }
+
+        const estoqueExistente =
+            await this.estoqueRepository.buscarEstoquePorCarro(
+                Number(dados.id_carro)
+            );
+
+        if (estoqueExistente) {
+            throw {
+                status: 409,
+                message: "Já existe estoque cadastrado para este carro."
+            };
+        }
+
+        if (Number(dados.quantidade) <= 0) {
+            throw {
+                status: 400,
+                message: "A quantidade deve ser maior que zero."
+            };
+        }
+
+        const estoque = new Estoque(
+            null,
+            Number(dados.id_carro),
+            Number(dados.quantidade),
+            dados.localizacao_patio,
+            new Date(dados.data_entrada)
+        );
+
+        return await this.estoqueRepository.inserirEstoque(estoque);
+    }
+
+    // Buscar estoque por ID
+    async buscarEstoque(id_estoque: number): Promise<Estoque> {
+        const estoque = await this.estoqueRepository.buscarEstoquePorId(id_estoque);
+
+        if (!estoque) {
+            throw {
+                status: 404,
+                message: "Estoque não encontrado."
             };
         }
 
         return estoque;
     }
 
-    //buscar estoque por id do carro
-    buscarEstoquePorCarro(id_carro: number): Estoque {
-        const estoque = this.estoqueRepository.filtraEstoquePorCarro(id_carro);
+    //Buscar estoque por ID do carro
+     async buscarEstoquePorCarro(id_carro: number): Promise<Estoque> {
 
-        if(!estoque){
+        const estoque =
+            await this.estoqueRepository.buscarEstoquePorCarro(id_carro);
+
+        if (!estoque) {
             throw {
                 status: 404,
-                message: "Estoque não encontrado para este carro"
+                message: "Estoque não encontrado para este carro."
             };
         }
 
         return estoque;
     }
 
-    //listar estoque
-    listarEstoque():Estoque[]{
-        return this.estoqueRepository.listarEstoque();
+     // listar todos
+    async listarEstoque(): Promise<Estoque[]> {
+
+        return await this.estoqueRepository.buscarTodosEstoque();
     }
 
     //atualizar estoque
-    atualizarEstoque(id_estoque: number, dados: any): Estoque {
-        //verificar se o estoque existe
-        const estoque = this.estoqueRepository.filtraEstoquePorId(id_estoque);
-        if(!estoque){
+        // Atualizar estoque
+    async atualizarEstoque(
+        id_estoque: number,
+        dados: Partial<Estoque>
+    ): Promise<Estoque> {
+
+        const estoqueAtual =
+            await this.estoqueRepository.buscarEstoquePorId(id_estoque);
+
+        if (!estoqueAtual) {
             throw {
                 status: 404,
-                message: "Estoque não encontrado"
+                message: "Estoque não encontrado."
             };
         }
 
-        //se for fornecido id_carro, verificar se o carro existe
-        if(dados.quantidade !== undefined && Number(dados.quantidade) < 0){
+        if (
+            dados.quantidade !== undefined &&
+            dados.quantidade <= 0
+        ) {
             throw {
                 status: 400,
-                message: "Quantidade deve ser maior ou igual a zero"
+                message: "A quantidade deve ser maior que zero."
             };
         }
 
-        //quantidade deve ser um número inteiro
-        if(dados.quantidade !== undefined && !Number.isInteger(Number(dados.quantidade))){
-            throw {
-                status: 400,
-                message: "Quantidade deve ser um número inteiro"
-            };
-        }
+        if (dados.id_carro !== undefined) {
 
-        if(dados.data_entrada){
-            const data_entrada = new Date(dados.data_entrada);
-            const hoje = new Date();
+            const carro =
+                await this.carroRepository.buscarCarroPorId(
+                    dados.id_carro
+                );
 
-            if(data_entrada > hoje){
+            if (!carro) {
                 throw {
-                    status: 400,
-                    message: "Data de entrada não pode ser futura"
+                    status: 404,
+                    message: "Carro não encontrado."
+                };
+            }
+
+            const estoqueExistente =
+                await this.estoqueRepository.buscarEstoquePorCarro(
+                    dados.id_carro
+                );
+
+            if (
+                estoqueExistente &&
+                estoqueExistente.id_estoque !== id_estoque
+            ) {
+                throw {
+                    status: 409,
+                    message: "Já existe estoque para este carro."
                 };
             }
         }
 
-        const estoqueAtualizado = this.estoqueRepository.atualizarEstoque(id_estoque, dados);
+        const estoqueAtualizado =
+            await this.estoqueRepository.atualizarEstoque(
+                id_estoque,
+                dados
+            );
 
-        if(!estoqueAtualizado){
+        if (!estoqueAtualizado) {
             throw {
-                status: 500,
-                message: "Erro ao atualizar estoque"
+                status: 404,
+                message: "Estoque não encontrado."
             };
         }
 
@@ -165,14 +172,16 @@ export class EstoqueService {
     }
 
     //deletar estoque
-    deletarEstoque(id_estoque: number): void {
-        const estoqueDeletado = this.estoqueRepository.deletarEstoque(id_estoque);
+        async deletarEstoque(id_estoque: number): Promise<void> {
 
-        if(!estoqueDeletado){
+        const estoque =
+            await this.estoqueRepository.deletarEstoque(id_estoque);
+
+        if (!estoque) {
             throw {
                 status: 404,
-                message: "Estoque não encontrado para deletar"
+                message: "Estoque não encontrado."
             };
         }
     }
- }
+}
