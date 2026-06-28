@@ -18,7 +18,7 @@ private carroService = new CarroService(); //Cria uma instancia para usar os mé
       // Caso não, pega o status do erro jogado pelo Service (400, 409) ou assume 500
     } catch (error: any) {
         const status = error.status ?? 500;
-        return res.status(status).json({ erro: error.message ?? "Erro interno do servidor." });
+        return res.status(status).json({ erro: error.messagem ?? "Erro interno do servidor." });
     }
 }
 
@@ -34,7 +34,7 @@ private carroService = new CarroService(); //Cria uma instancia para usar os mé
       // Caso não, pega o status do erro jogado pelo Service (400, 409) ou assume 500  
     } catch (error: any) {
         const status = error.status ?? 500;
-        return res.status(status).json({ erro: error.message ?? "Erro interno do servidor." });
+        return res.status(status).json({ erro: error.messagem ?? "Erro interno do servidor." });
     }
 }
 
@@ -49,7 +49,7 @@ private carroService = new CarroService(); //Cria uma instancia para usar os mé
         return res.status(200).json(carros);
     }catch(error: any){
         const status = error.status ?? 500;
-        return res.status(status).json({ erro: error.message ?? "Erro interno do servidor." });
+        return res.status(status).json({ erro: error.messagem ?? "Erro interno do servidor." });
     }
 }
 
@@ -68,7 +68,7 @@ private carroService = new CarroService(); //Cria uma instancia para usar os mé
       // Caso não encontre, trata o erro 404  
     } catch (error: any) {
         const status = error.status ?? 500;
-        return res.status(status).json({ erro: error.message ?? "Erro interno do servidor." });
+        return res.status(status).json({ erro: error.messagem ?? "Erro interno do servidor." });
     }
 }
 
@@ -87,7 +87,7 @@ private carroService = new CarroService(); //Cria uma instancia para usar os mé
       // Caso não de certo, trata o erro 404 
     } catch (error: any) {
         const status = error.status ?? 500;
-        return res.status(status).json({ erro: error.message ?? "Erro interno do servidor."});
+        return res.status(status).json({ erro: error.messagem ?? "Erro interno do servidor."});
     }
 }
 
@@ -107,7 +107,7 @@ async deletarCarro(req: Request, res: Response) {
       // Caso não de certo, trata o 404 ou 422 (regra do estoque)
     } catch (error: any) {
         const status = error.status ?? 500;
-        return res.status(status).json({ erro: error.message ?? "Erro interno do servidor." });
+        return res.status(status).json({ erro: error.messagem ?? "Erro interno do servidor." });
     }
 }
 
