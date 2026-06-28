@@ -16,7 +16,7 @@ private estoqueService = new EstoqueService();
 
     } catch (error: any) {
         const status = error.status ?? 500;
-        return res.json({ erro: error.mensagem ?? "Erro interno do servidor." });
+        return res.status(status).json({ erro: error.message ?? "Erro interno do servidor." });
         };
     }
 
@@ -31,7 +31,7 @@ async listarEstoque(req: Request, res: Response){
 
     } catch (error: any) {
         const status = error.status ?? 500;
-        return res.json({ erro: error.mensagem ?? "Erro interno do servidor."});
+        return res.status(status).json({ erro: error.message ?? "Erro interno do servidor." });
     }
 }
  
@@ -40,7 +40,7 @@ async listarEstoque(req: Request, res: Response){
 async buscarEstoque(req: Request, res: Response){
     try {
         //extrai o id dos parâmetros da requisição
-        const id_estoque = Number(req.params.id_estoque);
+        const id_estoque = Number(req.params.id);
 
         // await aguarda o banco retornar o estoque
         const estoque = await this.estoqueService.buscarEstoque(id_estoque);
@@ -50,7 +50,7 @@ async buscarEstoque(req: Request, res: Response){
 
     } catch (error: any) {
         const status = error.status ?? 500;
-        return res.json({ erro: error.mensagem ?? "Erro interno do servidor."});
+        return res.status(status).json({ erro: error.message ?? "Erro interno do servidor." });
     }
 }
 
@@ -58,7 +58,7 @@ async buscarEstoque(req: Request, res: Response){
 async buscarEstoquePorCarro(req: Request, res: Response){
     try {
         //extrai o id dos parâmetros da requisição
-        const id_carro = Number(req.params.id_carro);
+        const id_carro = Number(req.params.id);
 
         // await aguarda o banco retornar o estoque do carro
         const estoque = await this.estoqueService.buscarEstoquePorCarro(id_carro);
@@ -68,7 +68,7 @@ async buscarEstoquePorCarro(req: Request, res: Response){
 
     } catch (error: any) {
         const status = error.status ?? 500;
-        return res.json({ erro: error.mensagem ?? "Erro interno do servidor."});
+        return res.status(status).json({ erro: error.message ?? "Erro interno do servidor." });
     }
 }
 
@@ -76,7 +76,7 @@ async buscarEstoquePorCarro(req: Request, res: Response){
 async atualizarEstoque(req: Request, res: Response){
     try {
         //extrai o id dos parâmetros da requisição
-        const id_estoque = Number(req.params.id_estoque);
+        const id_estoque = Number(req.params.id);
 
         // await aguarda o banco atualizar e retornar o estoque atualizado
         const estoque = await this.estoqueService.atualizarEstoque(
@@ -89,7 +89,7 @@ async atualizarEstoque(req: Request, res: Response){
 
     } catch (error: any) {
         const status = error.status ?? 500;
-        return res.json({ erro: error.mensagem ?? "Erro interno do servidor."});
+        return res.status(status).json({ erro: error.message ?? "Erro interno do servidor." });
     }
 }
 
@@ -97,7 +97,7 @@ async atualizarEstoque(req: Request, res: Response){
 async deletarEstoque(req: Request, res: Response){
     try {
         //extrai o id do estoque dos parâmetros da requisição
-        const id_estoque = Number(req.params.id_estoque);
+        const id_estoque = Number(req.params.id);
 
         // await aguarda o banco deletar o estoque
         await this.estoqueService.deletarEstoque(id_estoque);
@@ -109,7 +109,7 @@ async deletarEstoque(req: Request, res: Response){
 
     } catch (error: any) {
         const status = error.status ?? 500;
-        return res.json({ erro: error.mensagem ?? "Erro interno do servidor."});
+        return res.status(status).json({ erro: error.message ?? "Erro interno do servidor." });
     }
 }
 
