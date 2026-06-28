@@ -1,115 +1,164 @@
-import { Carro } from "../model/Carro";
-import { CarroRepository } from "../repositories/carroRepository";
-import { EstoqueRepository } from "../repositories/estoqueRepository";
-import { NotaFiscalRepository } from "../repositories/notaFiscalRepository";
+import { Carro } from '../model/Carro';
+import { CarroRepository } from '../repositories/carroRepository';
 
 export class CarroService {
-    private carroRepository = CarroRepository.getInstance();
-    private estoqueRepository = EstoqueRepository.getInstance();
-    private notaFiscalRepository = NotaFiscalRepository.getInstance();
-    // Regras de Negócio para cadastro de carros
-    cadastrarCarro(dados: any): Carro {
-        const { marca, modelo, ano, placa, preco, cor } = dados;
 
-        // Valida o campo obrigatório placa
-        if(!placa) {
-            throw { status: 400, message: "O campo placa é obrigatório." }
+    carroRepository: CarroRepository = CarroRepository.getInstance();
+
+    //cadastrar carro
+    async cadastrarCarro(dados: any): Promise<Carro> {
+
+        //Validação dos campos obrigatórios
+        if(
+            !dados.marca ||
+            !dados.modelo ||
+            !dados.ano ||
+            !dados.placa ||
+            dados.preco == null ||
+            !dados.cor
+        ){
+            throw{
+                status: 400,
+                message: 'Campos obrigatórios não preenchidos'
+            };
         }
 
-        // Valida se já existe o campo placa
-        const placaExiste = this.carroRepository.buscarPorPlaca(placa);
-        if(placaExiste) {
-            throw { status: 409, message: "Não é permitido cadastrar dois carros com a mesma placa." };
+        //placa duplicada
+        const carroExistente = await this.carroRepository.buscarCarroPorPlaca(dados.placa);
+
+        if(carroExistente){
+            throw{
+                status: 400,
+                message: 'Placa já cadastrada'
+            };
         }
 
-        // Valida se o ano do veiculo está entre 1950 e o ano atual + 1
-        const anoMaximoPermitido = new Date().getFullYear() + 1;
-        if(ano < 1950 || ano > anoMaximoPermitido) {
-            throw { status: 400, message: `O ano deve ser entre 1950 e ${anoMaximoPermitido}.` };
+        //preço negativo
+        if(Number(dados.preco) <= 0){
+            throw{
+                status: 400,
+                message: 'Preço deve ser maior que zero'
+            };
         }
 
-        // Verifica se o preço é positivo e maior que zero
-        if(preco <= 0) {
-            throw { status: 400, message: "O preço deve ser um valor positivo e maior que zero." };
+        //ano
+        const anoAtual = new Date().getFullYear() + 1;
+
+        if(
+            Number(dados.ano) < 1900 ||
+            Number(dados.ano) > anoAtual
+        ){
+            throw{
+                status: 400,
+                message: 'Ano inválido'
+            };
         }
+        
+        const carro = new Carro(
+            null,
+            dados.marca,
+            dados.modelo,
+            dados.ano,
+            dados.placa,
+            dados.preco,
+            dados.cor
+        );
 
-        const novoCarro = new Carro(marca, modelo, ano, placa, preco, cor);
-        this.carroRepository.cadastrarCarro(novoCarro);
-
-        return novoCarro;
+         return await this.carroRepository.inserirCarro(carro);
     }
 
-    // Listagem de todos os carros
-    listarTodos(): Carro[] {
-        return this.carroRepository.listarCarros();
-    }
+    //buscar carro
+    async buscarCarro(id_carro: number): Promise<Carro> {
 
-    // Busca de carro por ID
-    buscarPorId(id: number): Carro {
-        const carro = this.carroRepository.listarPorId(id);
+        const carro = await this.carroRepository.buscarCarroPorId(id_carro);
 
-        if(!carro) {
-            throw {status: 404, message: "Carro não encotrado pelo ID informado."};
+         if(!carro){
+            throw {
+                status: 404,
+                message: "Carro não encontrado"
+            };
         }
 
         return carro;
     }
 
-    // Regras de Negócio para atualização de carros
-    atualizarCarro(id: number, dadosAtualizados: Partial<Carro>):Carro {
-        this.buscarPorId(id);
+    //Listar todos os carros
+    async listarCarros(): Promise<Carro[]> {
+        return await this.carroRepository.buscarTodoCarros();
+    }
 
-        // Se tentar atualizar a placa, verifica se ela já pertence a outro carro
-        if(dadosAtualizados.placa) {
-            const carroComPlaca = this.carroRepository.buscarPorPlaca(dadosAtualizados.placa);
-            if (carroComPlaca && carroComPlaca.id_carro !== id) {
-                throw { status: 409, message: "Esta placa já está sendo utilizada por outro veículo." };
+    //atualizar carro
+    async atualizarCarro(id_carro: number, dadosAtualizados: any): Promise<Carro> {
+
+        const carro = await this.carroRepository.buscarCarroPorId(id_carro);
+
+        if(!carro){
+            throw {
+                status: 404,
+                message: "Carro não encontrado"
+            };
+        }
+
+        //validar placa
+        if(dadosAtualizados.placa){
+            const placaExistente = await this.carroRepository.buscarCarroPorPlaca(dadosAtualizados.placa);
+
+            if(placaExistente && placaExistente.id_carro !== id_carro){
+                throw {
+                    status: 400,
+                    message: "Placa já cadastrada"
+                };
             }
         }
 
-        // Se tentar atualizar o ano, verifica se ele atende as regras
-        if (dadosAtualizados.ano) {
-            const anoMaximoPermitido = new Date().getFullYear() + 1;
-            if (dadosAtualizados.ano < 1950 || dadosAtualizados.ano > anoMaximoPermitido) {
-                throw { status: 400, message: `O ano deve ser entre 1950 e ${anoMaximoPermitido}.` };
+        //validar preço
+        if(dadosAtualizados.preco !== undefined && Number(dadosAtualizados.preco) <= 0){
+            throw {
+                status: 400,
+                message: "Preço deve ser maior que zero"
+            };
+        }
+
+        //validar ano
+        if(dadosAtualizados.ano !== undefined){
+            const anoAtual = new Date().getFullYear() + 1;
+
+            if(dadosAtualizados.ano < 1900 || dadosAtualizados.ano > anoAtual){
+                throw {
+                    status: 400,
+                    message: "Ano inválido"
+                };
             }
         }
 
-        // Se tentar atualizar o preço, verifica se ele atende as regras
-        if (dadosAtualizados.preco !== undefined && dadosAtualizados.preco <= 0) {
-            throw { status: 400, message: "O preço deve ser um valor positivo maior que zero." };
+        //atualizar carro
+        const carroAtualizado =
+            await this.carroRepository.atualizarCarro(
+                id_carro,
+                dadosAtualizados
+            );
+
+        if(!carroAtualizado){
+            throw {
+                status: 404,
+                message: "Carro não encontrado"
+            };
         }
 
-        return this.carroRepository.atualizarCarro(id, dadosAtualizados)!;
+        return carroAtualizado;
+
     }
 
-    //listar carros com estoque disponivel 
-    listarCarrosDisponiveis():Carro[]{
-        //buscar todos os carros cadastrados
-        const carros = this.carroRepository.listarCarros();
+    //deletar carro
+    async deletarCarro(id_carro: number): Promise<void> {
 
-        //filtra o que tem estoque > 0
-        return carros.filter(carro => {
-            const estoque = this.estoqueRepository.filtraEstoquePorCarro(carro.id_carro as number);
-            return estoque && estoque.quantidade > 0;
-        })//para cada carro busca o estoque no repositorio dele
-    }
+        const carroDeletado = await this.carroRepository.deletarCarro(id_carro);
 
-    // Regras de Negócio para deletar carros
-    deletarCarro(id: number): void {
-        const estoque = this.estoqueRepository.filtraEstoquePorCarro(id);
-
-        if(estoque && estoque.quantidade > 0) {
-            throw { status: 400, message: "Não é permitido deletar um carro que possui estoque disponível." };
+        if(!carroDeletado){
+            throw {
+                status: 404,
+                message: "Carro não encontrado"
+            };
         }
-
-        //notas associadas a esse carro, se tiver não pode deletar
-        const notasAssociadas = this.notaFiscalRepository.filtrarNotasCarro(id);
-        if(notasAssociadas.length > 0){
-            throw { status: 400, message: "Não é permitido deletar um carro que possui notas fiscais associadas." };
-        }
-        
-        this.buscarPorId(id);
-        this.carroRepository.deletarCarro(id);
     }
 }
