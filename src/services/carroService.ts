@@ -2,6 +2,7 @@ import { Carro } from '../model/Carro';
 import { CarroRepository } from '../repositories/carroRepository';
 import { EstoqueRepository } from '../repositories/estoqueRepository';
 import { Estoque } from '../model/Estoque';
+import { NotaFiscalRepository } from '../repositories/notaFiscalRepository';
 
 export class CarroService {
 
@@ -30,7 +31,7 @@ export class CarroService {
 
         if(carroExistente){
             throw{
-                status: 400,
+                status: 409,
                 message: 'Placa já cadastrada'
             };
         }
@@ -47,7 +48,7 @@ export class CarroService {
         const anoAtual = new Date().getFullYear() + 1;
 
         if(
-            Number(dados.ano) < 1900 ||
+            Number(dados.ano) < 1950 ||
             Number(dados.ano) > anoAtual
         ){
             throw{
@@ -105,13 +106,6 @@ export class CarroService {
         return estoque && estoque.quantidade > 0;
     });
 
-    if (carrosDisponiveis.length === 0) {
-        throw {
-            status: 404,
-            message: "Nenhum carro disponível encontrado."
-        };
-    }
-
     return carrosDisponiveis;
 }
 
@@ -151,7 +145,7 @@ export class CarroService {
         if(dadosAtualizados.ano !== undefined){
             const anoAtual = new Date().getFullYear() + 1;
 
-            if(dadosAtualizados.ano < 1900 || dadosAtualizados.ano > anoAtual){
+            if(dadosAtualizados.ano <= 1950 || dadosAtualizados.ano > anoAtual){
                 throw {
                     status: 400,
                     message: "Ano inválido"
@@ -180,7 +174,28 @@ export class CarroService {
     //deletar carro
     async deletarCarro(id_carro: number): Promise<void> {
 
+        //verificar estoque do carro antes de deletar
+        const estoque = await this.estoqueRepository.buscarEstoquePorCarro(id_carro);
+
+        if(estoque && estoque.quantidade > 0){
+            throw {
+                status: 422,
+                message: "Não é possível deletar o carro, pois ele possui estoque disponível."
+            };
+        }
+
+        //verificar notas fiscais do carro antes de deletar
+        const notasFiscais = await NotaFiscalRepository.getInstance().buscarPorCarro(id_carro);
+
+        if(notasFiscais.length > 0){
+            throw {
+                status: 422,
+                message: "Não é possível deletar o carro, pois ele possui notas fiscais associadas."
+            };
+        }
+
         const carroDeletado = await this.carroRepository.deletarCarro(id_carro);
+
 
         if(!carroDeletado){
             throw {
