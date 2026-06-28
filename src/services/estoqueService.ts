@@ -44,7 +44,7 @@ export class EstoqueService {
             };
         }
 
-        if (Number(dados.quantidade) <= 0) {
+        if (Number(dados.quantidade) < 0) {
             throw {
                 status: 400,
                 message: "A quantidade deve ser maior que zero."
@@ -117,7 +117,7 @@ export class EstoqueService {
 
         if (
             dados.quantidade !== undefined &&
-            dados.quantidade <= 0
+            dados.quantidade < 0
         ) {
             throw {
                 status: 400,
