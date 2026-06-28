@@ -2,107 +2,116 @@ import { Request, Response } from "express";
 import { CarroService } from "../services/carroService";
 import { stat } from "node:fs";
 
-const carroService = new CarroService(); //Cria uma instancia para usar os métodos
+export class CarroController {
 
-// POST - Cadastrar carro
-export function cadastrarCarro(req: Request, res: Response) {
+private carroService = new CarroService(); //Cria uma instancia para usar os métodos
+
+    // POST - Cadastrar carro
+    async cadastrarCarro(req: Request, res: Response) {
     try {
-        const novoCarro = carroService.cadastrarCarro(req.body); // Usando os dados da requisição e manda para o service
+        //re.body contém os dados da requisição e o wai aguarda a Promise do service resolver (operação no banco)
+        const novoCarro = await this.carroService.cadastrarCarro(req.body); // Usando os dados da requisição e manda para o service
 
         // Caso de certo, retorna o status 201 e a mensagem
-        res.status(201).json({
-            mensagem: "Carro cadastrado com sucesso!",
-            carro: novoCarro
-        });
+        return res.status(201).json(novoCarro);
+
       // Caso não, pega o status do erro jogado pelo Service (400, 409) ou assume 500
     } catch (error: any) {
-        const status = error.status || 500;
-        res.status(status).json({ message: error.message || "Erro interno do servidor." });
+        const status = error.status ?? 500;
+        return res.status(status).json({ erro: error.message ?? "Erro interno do servidor." });
     }
 }
 
-// GET - Listar todos os carros
-export function listarCarros(req: Request, res: Response) {
+    // GET - Listar todos os carros
+    async listarCarros(req: Request, res: Response) {
     try {
-        const carros = carroService.listarTodos(); // Variável para armazenar os carros que rertonaram da função
-        // Caso de certo, retorna o status 200 e a mensagem
-        res.status(200).json({
-            mensagem: "Carros listados com sucesso!",
-            carros: carros
-        });
+        // await aguarda o banco retornar o array de carros
+        const carros = await this.carroService.listarCarros();
+
+        
+        return res.status(200).json(carros);
+
       // Caso não, pega o status do erro jogado pelo Service (400, 409) ou assume 500  
     } catch (error: any) {
-        const status = error.status || 500;
-        res.status(status).json({ message: error.message || "Erro interno do servidor." });
+        const status = error.status ?? 500;
+        return res.status(status).json({ erro: error.message ?? "Erro interno do servidor." });
     }
 }
 
-//GET - listar carrosdisponiveis 
-export function listarCarrosDisponiveis(req: Request, res: Response){
+
+    //GET - listar carrosdisponiveis 
+    async listarCarrosDisponiveis(req: Request, res: Response){
     try{
-        const carros = carroService.listarCarrosDisponiveis();// Variável para armazenar os carros que rertonaram da função
-        // Caso de certo, retorna o status 200 e a mensagem
-        res.status(200).json({
-            mensagem: "Carros disponiveis listados com sucesso!",
-            carros
-        })
-        // Caso não, pega o status do erro jogado pelo Service (400, 409) ou assume 500  
-    }catch (error: any){
-        const status = error.status || 500;
-        res.status(status).json({message: error.message})
+        // await aguarda o banco retornar apenas os carros com estoque disponível
+        const carros = await this.carroService.listarCarrosDisponiveis();
+
+        // deu certo → retorna 200 com a lista de carros disponíveis
+        return res.status(200).json(carros);
+    }catch(error: any){
+        const status = error.status ?? 500;
+        return res.status(status).json({ erro: error.message ?? "Erro interno do servidor." });
     }
 }
+
 
 // GET - Buscar carro por ID
-export function buscarCarroPorId(req: Request, res: Response) {
+    async buscarCarroPorId(req: Request, res: Response) {
     try {
+        //convert string da url para number
         const id = Number(req.params.id); // Extrai o id dos parâmetros da URL
 
-        const carro = carroService.buscarPorId(id); // Variável para armazenar o carro que retorna da função
-        // Caso de certo, retorna o status 200 e a mensagem
-        res.status(200).json({
-            mensagem: "Carro encontrado com sucesso!",
-            carro: carro
-        });
+        // await aguarda o banco retornar o carro);
+        const carro = await this.carroService.buscarCarro(id);  
+
+        return res.status(200).json(carro); // Caso de certo, retorna o status 200 e o carro encontrado
+
       // Caso não encontre, trata o erro 404  
     } catch (error: any) {
-        const status = error.status || 500;
-        res.status(status).json({ message: error.message });
+        const status = error.status ?? 500;
+        return res.status(status).json({ erro: error.message ?? "Erro interno do servidor." });
     }
 }
 
-// PUT - Atualizar dados do carro
-export function atualizarCarro(req: Request, res: Response) {
+
+    // PUT - Atualizar dados do carro
+    async atualizarCarro(req: Request, res: Response) {
     try {
         const id = Number(req.params.id); // Extrai o id dos parâmetros da URL
 
-        const carroAtualizado = carroService.atualizarCarro(id, req.body); // Variável para armazenar o carro atualizado que retorna da função
-        // Caso de certo, retorna o status 200 e a mensagem
-        res.status(200).json({
-            mensagem: "Carro atualizado com sucesso!",
-            carro: carroAtualizado
-        });
+        // await aguarda o banco atualizar e retornar o carro atualizado
+        const carroAtualizado = await this.carroService.atualizarCarro(id, req.body); 
+
+        // Caso de certo, retorna o status 200 com o carro atualizado
+        return res.status(200).json(carroAtualizado);
+
       // Caso não de certo, trata o erro 404 
     } catch (error: any) {
-        const status = error.status || 500;
-        res.status(status).json({ message: error.message });
+        const status = error.status ?? 500;
+        return res.status(status).json({ erro: error.message ?? "Erro interno do servidor."});
     }
 }
 
 // DELETE - Deletar um carro
-export function deletarCarro(req: Request, res: Response) {
+async deletarCarro(req: Request, res: Response) {
     try {
         const id = Number(req.params.id); // Extrai o id dos parâmetros da URL
 
-        carroService.deletarCarro(id); // Chama a funnção de deletar, passando o "id" obtido por parametro
+         // await aguarda o banco deletar o carro e não retorna o carro pois foi removido
+        await this.carroService.deletarCarro(id); 
 
         // Caso de certo, retorna o status 200 e a mensagem
-        res.status(200).json({
+        return res.status(200).json({
             mensagem: "Carro removido com sucesso!"
         });
+
       // Caso não de certo, trata o 404 ou 422 (regra do estoque)
     } catch (error: any) {
-        const status = error.status || 500;
-        res.status(status).json({ message: error.message });
+        const status = error.status ?? 500;
+        return res.status(status).json({ erro: error.message ?? "Erro interno do servidor." });
     }
 }
+
+}
+
+
+
