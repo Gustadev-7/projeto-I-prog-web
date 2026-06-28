@@ -16,7 +16,7 @@ async cadastrarVendedor(req: Request, res: Response) {
 
     }catch (error: any) {
         const status = error.status ?? 500;
-        return res.status(status).json({ erro: error.mensagem ?? "Erro interno do servidor."})
+        return res.status(status).json({ erro: error.mensage ?? "Erro interno do servidor."})
     }
 }
 
@@ -31,7 +31,7 @@ async listarVendedores(req: Request, res: Response) {
 
     } catch (error: any) {
         const status = error.status ?? 500;
-        return res.status(status).json({ erro: error.mensagem ?? "Erro interno do servidor"})
+        return res.status(status).json({ erro: error.mensage ?? "Erro interno do servidor"})
     }
 }
 
@@ -41,7 +41,7 @@ async buscarVendedor(req: Request, res: Response) {
     try {
 
         // extrai o id do vendedor dos parâmetros da requisição
-        const { id_vendedor } = req.params;
+        const id_vendedor  = req.params.id
 
         //await aguarda o banco retornar o vendedor
         const vendedor = await this.vendedorService.buscarVendedor(
@@ -53,7 +53,7 @@ async buscarVendedor(req: Request, res: Response) {
 
     } catch (error: any) {
         const status = error.status ?? 500;
-        return res.status(status).json({ erro: error.mensagem ?? "Erro interno do servidor."});
+        return res.status(status).json({ erro: error.mensage ?? "Erro interno do servidor."});
     }
 } 
 
@@ -62,7 +62,7 @@ async buscarVendedor(req: Request, res: Response) {
 async listarNotasPorVendedor(req: Request, res: Response) {
     try {
         // extrai o id do vendedor dos parâmetros da requisição
-        const { id_vendedor } = req.params;
+        const id_vendedor  = req.params.id
 
         // await aguarda o banco retornar as notas do vendedor
         const notas = await this.vendedorService.listarNotasPorVendedor(Number(id_vendedor));
@@ -72,7 +72,7 @@ async listarNotasPorVendedor(req: Request, res: Response) {
 
     } catch (error: any) {
         const status = error.status ?? 500;
-        return res.status(status).json({ erro: error.mensagem ?? "Erro interno do servidor."});
+        return res.status(status).json({ erro: error.mensage ?? "Erro interno do servidor."});
     }
 }
 
@@ -81,7 +81,7 @@ async atualizarVendedor(req: Request, res: Response) {
     try {
 
         // extrai o id do vendedor dos parâmetros da requisição
-        const { id_vendedor } = req.params;
+        const id_vendedor  = req.params.id
 
         // await aguarda o banco atualizar e retornar o vendedor atualizado
         const vendedorAtualizado = await this.vendedorService.atualizarVendedor(Number(id_vendedor),req.body);
@@ -91,7 +91,7 @@ async atualizarVendedor(req: Request, res: Response) {
 
     } catch (error: any) {
         const status = error.status ?? 500;
-        return res.status(status).json({ erro: error.mensagem ?? "Erro interno do servidor."});
+        return res.status(status).json({ erro: error.mensage ?? "Erro interno do servidor."});
     }
 
 }
@@ -102,7 +102,7 @@ async deletarVendedor(req: Request, res: Response) {
     try {
 
         // extrai o id do vendedor dos parâmetros da requisição
-        const { id_vendedor } = req.params;
+        const id_vendedor  = req.params.id
 
         // await aguarda o banco deletar o vendedor
         await this.vendedorService.deletarVendedor(Number(id_vendedor));
@@ -114,7 +114,7 @@ async deletarVendedor(req: Request, res: Response) {
 
     } catch (error: any) {
         const status = error.status ?? 500;
-        return res.status(status).json({ erro: error.mensagem ?? "Erro interno do servidor."})
+        return res.status(status).json({ erro: error.mensage ?? "Erro interno do servidor."})
     }
 }
 
