@@ -88,13 +88,6 @@ export class ClienteService {
 
         const notas = await this.notaFiscalRepository.buscarPorCliente(id_cliente);
 
-        if (!notas || notas.length === 0) {
-            throw {
-                status: 404,
-                messagem: "Nenhuma nota fiscal encontrada para este cliente."
-            };
-        }
-
         return notas;
     }
 
