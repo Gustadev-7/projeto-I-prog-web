@@ -51,6 +51,15 @@ export class EstoqueService {
             };
         }
 
+        const dataEntrada = new Date(dados.data_entrada);
+        const hoje = new Date();
+        if (dataEntrada > hoje) {
+            throw {
+                status: 400,
+                message: "A data de entrada não pode ser futura."
+            };
+        }
+
         const estoque = new Estoque(
             null,
             Number(dados.id_carro),
