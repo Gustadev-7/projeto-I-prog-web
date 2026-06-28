@@ -18,7 +18,7 @@ async emitirNota(req: Request, res: Response){
         //se der errado, retorna status 400 e a mensagem de erro
     }catch(error: any){
         const status = error.status ?? 500;
-        return res.status(status).json({ erro: error.mensagem ?? "Erro interno do servidor."});
+        return res.status(status).json({ erro: error.mensage ?? "Erro interno do servidor."});
     }
 }
 
@@ -32,7 +32,7 @@ async listarNotas(req: Request, res: Response){
 
     }catch(error: any){
         const status = error.status ?? 500;
-        return res.status(status).json({ erro: error.mensagem ?? "Erro interno do servidor."})
+        return res.status(status).json({ erro: error.mensage ?? "Erro interno do servidor."})
     }
 }
 
@@ -40,7 +40,7 @@ async listarNotas(req: Request, res: Response){
 async buscarNotaPorId(req: Request, res: Response){
     try{
         //recebe o id da nota pelos parâmetros da URL
-        const id_nota = Number(req.params.id_nota);
+        const id_nota = Number(req.params.id);
 
         // await aguarda o banco retornar a nota
         const nota = await this.notaFiscalService.buscarNotaPorId(id_nota);
@@ -50,7 +50,7 @@ async buscarNotaPorId(req: Request, res: Response){
 
     }catch(error: any){
         const status = error.status ?? 500;
-        return res.status(status).json({ erro: error.mensagem ?? "Erro interno do servidor."});
+        return res.status(status).json({ erro: error.mensage ?? "Erro interno do servidor."});
 
     }
 }
@@ -68,7 +68,7 @@ async listarNotasPorCliente(req: Request, res: Response){
 
     }catch(error: any){
         const status = error.status ?? 500;
-        return res.status(status).json({ erro: error.mensagem ?? "Erro interno do servidor."});
+        return res.status(status).json({ erro: error.mensage ?? "Erro interno do servidor."});
     }
 }
 
@@ -86,7 +86,7 @@ async listarNotasPorVendedor(req: Request, res: Response){
 
     }catch(error: any){
         const status = error.status ?? 500;
-        return res.status(status).json({ erro: error.mensagem ?? "Erro interno do servidor."});
+        return res.status(status).json({ erro: error.mensage ?? "Erro interno do servidor."});
     }
 }
 
@@ -94,14 +94,14 @@ async listarNotasPorVendedor(req: Request, res: Response){
 async deletarNota(req: Request, res: Response){
     try{
         //usando o id que vem na URL
-        const id_nota = Number(req.params.id_nota);
+        const id_nota = Number(req.params.id);
 
         //sempre teremos o erro, pois não podemos deletar nota
        await this.notaFiscalService.deletarNota(id_nota);
 
     }catch (error: any){
         const status = error.status ?? 422;
-        return res.status(status).json({ erro: error.mensagem ?? "Erro interno do servidor."});  
+        return res.status(status).json({ erro: error.mensage ?? "Erro interno do servidor."});  
     }
 }
 
