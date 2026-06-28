@@ -206,7 +206,7 @@ export class NotaFiscalService {
         }
 
         throw {
-            status: 400,
+            status: 422,
             message: "Nota fiscal não pode ser deletada após a emissão."
         };
     }
