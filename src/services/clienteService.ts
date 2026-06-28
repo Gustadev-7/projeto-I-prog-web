@@ -3,11 +3,12 @@ import { ClienteRepository } from "../repositories/clienteRepository";
 import { NotaFiscalRepository } from "../repositories/notaFiscalRepository";
 
 export class ClienteService {
+
     private clienteRepository = ClienteRepository.getInstance();
     private notaFiscalRepository = NotaFiscalRepository.getInstance();
 
-    //cadastrar cliente
-     async cadastrarCliente(dados: any): Promise<Cliente> {
+    // Cadastrar cliente
+    async cadastrarCliente(dados: any): Promise<Cliente> {
 
         // Validação dos campos obrigatórios
         if (!dados.nome || !dados.cpf || !dados.telefone) {
@@ -74,6 +75,29 @@ export class ClienteService {
         return await this.clienteRepository.buscarTodosClientes();
     }
 
+    // Listar notas fiscais por cliente
+    async listarNotasPorCliente(id_cliente: number): Promise<any[]> {
+        const cliente = await this.clienteRepository.buscarClientePorId(id_cliente);
+
+        if (!cliente) {
+            throw {
+                status: 404,
+                message: "Cliente não encontrado."
+            };
+        }
+
+        const notas = await this.notaFiscalRepository.buscarPorCliente(id_cliente);
+
+        if (!notas || notas.length === 0) {
+            throw {
+                status: 404,
+                message: "Nenhuma nota fiscal encontrada para este cliente."
+            };
+        }
+
+        return notas;
+    }
+
     // Atualizar cliente
     async atualizarCliente(
         id_cliente: number,
@@ -129,7 +153,8 @@ export class ClienteService {
     // Deletar cliente
     async deletarCliente(id_cliente: number): Promise<void> {
 
-        const cliente = await this.clienteRepository.buscarClientePorId(id_cliente);
+        const cliente =
+            await this.clienteRepository.buscarClientePorId(id_cliente);
 
         if (!cliente) {
             throw {
@@ -138,17 +163,17 @@ export class ClienteService {
             };
         }
 
-        //verificar se o cliente possui notas fiscais associadas
-        const notasFiscais = await this.notaFiscalRepository.buscarPorCliente(id_cliente);
+        // Verifica notas fiscais vinculadas
+        const notas =
+            await this.notaFiscalRepository.buscarPorCliente(id_cliente);
 
-        if (notasFiscais.length > 0) {
+        if (notas.length > 0) {
             throw {
-                status: 400,
+                status: 409,
                 message: "Cliente possui notas fiscais associadas."
             };
         }
 
         await this.clienteRepository.deletarCliente(id_cliente);
     }
-
 }
