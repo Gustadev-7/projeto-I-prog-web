@@ -1,4 +1,3 @@
-import "dotenv/config";
 import express from "express";
 import router from "./routes/router";
 import {inicializarBanco} from "./database/mysql";
