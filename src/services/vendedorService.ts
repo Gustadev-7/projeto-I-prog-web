@@ -1,121 +1,183 @@
-//vendedorService
-import { VendedorRepository } from "../repositories/vendedorRepository";
 import { Vendedor } from "../model/Vendedor";
+import { VendedorRepository } from "../repositories/vendedorRepository";
 import { NotaFiscalRepository } from "../repositories/notaFiscalRepository";
 
-export class VendedorService{
-    vendedorRepository: VendedorRepository = VendedorRepository.getInstance();
-    notaFiscalRepository: NotaFiscalRepository = NotaFiscalRepository.getInstance();
+export class VendedorService {
 
-    cadastrarVendedor(dados: any): Vendedor {
-        //Validação dos dados obrigatórios
-       if(!dados.nome || !dados.matricula || dados.comissao_percentual == null){
+    private vendedorRepository = VendedorRepository.getInstance();
+    private notaFiscalRepository = NotaFiscalRepository.getInstance();
+
+     // Cadastrar vendedor
+    async cadastrarVendedor(dados: any): Promise<Vendedor> {
+
+        // Validação dos campos obrigatórios
+        if (
+            !dados.nome ||
+            !dados.matricula ||
+            dados.comissao_percentual == null
+        ) {
             throw {
                 status: 400,
-                message: "Dados obrigatórios incompletos"
+                message: "Dados obrigatórios incompletos."
             };
         }
 
-        //Vendedores com a mesma matrícula não podem ser cadastrados
-        if(this.vendedorRepository.buscarPorMatricula(dados.matricula)){
+        // Verifica se já existe um vendedor com a mesma matrícula
+        const vendedorExistente =
+            await this.vendedorRepository.buscarVendedorPorMatricula(
+                dados.matricula
+            );
+
+        if (vendedorExistente) {
             throw {
                 status: 409,
-                message: "Matrícula já cadastrada"
+                message: "Matrícula já cadastrada."
             };
         }
 
-        //comissão percentual deve ser um número entre 0 e 30
-        if(Number(dados.comissao_percentual) < 0 || Number(dados.comissao_percentual) > 30){
+        // Comissão deve estar entre 0 e 30%
+        if (
+            Number(dados.comissao_percentual) < 0 ||
+            Number(dados.comissao_percentual) > 30
+        ) {
             throw {
                 status: 400,
-                message: "Comissão percentual deve estar entre 0 e 30%"
+                message: "A comissão deve estar entre 0 e 30%."
             };
         }
 
-        //criando o vendedor com os dados da requisição
         const vendedor = new Vendedor(
+            null,
             dados.nome,
             dados.matricula,
-            dados.comissao_percentual
+            Number(dados.comissao_percentual)
         );
 
-        //inserimos o vendedor no reppsitótio, guarda no array de vendedores
-        this.vendedorRepository.insereVendedor(vendedor); 
+        return await this.vendedorRepository.inserirVendedor(vendedor);
+    }
+
+    //buscar vendedor por id
+    async buscarVendedor(id_vendedor: number): Promise<Vendedor> {
+        const vendedor = await this.vendedorRepository.buscarVendedorPorId(id_vendedor);
+        if (!vendedor) {
+            throw {
+                status: 404,
+                message: "Vendedor não encontrado."
+            };
+        }
         return vendedor;
     }
 
-        //buscar vendedor
-        buscarVendedor(id_vendedor: number): Vendedor {
-            const vendedor =
-                this.vendedorRepository.filtraVendedorPorId(id_vendedor);
+    //listar todos os vendedores
+    async listarVendedores(): Promise<Vendedor[]> {
+        return await this.vendedorRepository.buscarTodosVendedores();
+    }
 
-            if(!vendedor){
-                throw {
-                    status: 404,
-                    message: "Vendedor não encontrado"
-                };
-            }
+    //listar notas fiscais por vendedor
+    async listarNotasPorVendedor(id_vendedor: number): Promise<any[]> {
+        // Verifica se o vendedor existe
+        const vendedor = await this.vendedorRepository.buscarVendedorPorId(id_vendedor);
+        if (!vendedor) {
+            throw {
+                status: 404,
+                message: "Vendedor não encontrado."
+            };
+        }
+        return await this.notaFiscalRepository.buscarPorVendedor(id_vendedor);
+    }
 
-            return vendedor;
+    //atualizar vendedor
+    async atualizarVendedor(
+        id_vendedor: number,
+        dados: Partial<Vendedor>
+    ): Promise<Vendedor> {
+
+        // Verifica se o vendedor existe
+        const vendedor =
+            await this.vendedorRepository.buscarVendedorPorId(id_vendedor);
+
+        if (!vendedor) {
+            throw {
+                status: 404,
+                message: "Vendedor não encontrado."
+            };
         }
 
-        //listar vendedores
-        listarVendedores(): Vendedor[] {
-            return this.vendedorRepository.listarVendedores();
-        }
+        // Verifica matrícula duplicada
+        if (dados.matricula !== undefined) {
 
-        //atualizar vendedor
-        atualizarVendedor(id_vendedor: number, dados: any): Vendedor {
-            if(dados.matricula){
-                const vendedorExistente = this.vendedorRepository.buscarPorMatricula(dados.matricula);
+            const vendedorExistente =
+                await this.vendedorRepository.buscarVendedorPorMatricula(
+                    dados.matricula
+                );
 
-                //verifica se a matrícula já existe para outro vendedor
-                if(vendedorExistente && vendedorExistente.id_vendedor !== id_vendedor){
-                    throw {
-                        status: 409,
-                        message: "Matrícula já cadastrada para outro vendedor"
-                    };
-                }
-            }
-
-            //validar comissão percentual se for fornecida
-            if(dados.comissao_percentual != undefined && (Number(dados.comissao_percentual) < 0 || Number(dados.comissao_percentual) > 30)){
+            if (
+                vendedorExistente &&
+                vendedorExistente.id_vendedor !== id_vendedor
+            ) {
                 throw {
-                    status: 400,
-                    message: "Comissão percentual deve estar entre 0 e 30%"
-                };
-            }
-
-            const vendedorAtualizado = this.vendedorRepository.atualizarVendedor(id_vendedor, dados);
-
-            if(!vendedorAtualizado){
-                throw {
-                    status: 404,
-                    message: "Vendedor não encontrado para atualização"
-                };
-            }
-
-            return vendedorAtualizado;
-        }
-
-        //deletar vendedor caso ele não esteja associado a nenhuma nota fiscal
-        deletarVendedor(id_vendedor: number): void {
-            const notasAssociadas = this.notaFiscalRepository.filtrarNotasVendedor(id_vendedor);
-
-            if(notasAssociadas.length > 0){
-                throw {
-                    status: 400,
-                    message: "Não é possível deletar o vendedor, ele está associado a uma ou mais notas fiscais"
-                };
-            }
-
-            const vendedorDeletado = this.vendedorRepository.deletarVendedor(id_vendedor);
-
-            if(!vendedorDeletado){
-                throw {
-                    status: 404,
-                    message: "Vendedor não encontrado para deleção"
+                    status: 409,
+                    message: "Matrícula já cadastrada para outro vendedor."
                 };
             }
         }
+
+        // Validação da comissão
+        if (
+            dados.comissao_percentual !== undefined &&
+            (
+                dados.comissao_percentual < 0 ||
+                dados.comissao_percentual > 30
+            )
+        ) {
+            throw {
+                status: 400,
+                message: "A comissão deve estar entre 0 e 30%."
+            };
+        }
+
+        const vendedorAtualizado =
+            await this.vendedorRepository.atualizarVendedor(
+                id_vendedor,
+                dados
+            );
+
+        if (!vendedorAtualizado) {
+            throw {
+                status: 404,
+                message: "Vendedor não encontrado."
+            };
+        }
+
+        return vendedorAtualizado;
+    }
+
+    //deletar vendedor
+    async deletarVendedor(id_vendedor: number): Promise<void> {
+
+        // Verifica se o vendedor existe
+        const vendedor =
+            await this.vendedorRepository.buscarVendedorPorId(id_vendedor);
+
+        if (!vendedor) {
+            throw {
+                status: 404,
+                message: "Vendedor não encontrado."
+            };
+        }
+
+        // Verifica se o vendedor possui notas fiscais
+        const notasAssociadas =
+            await this.notaFiscalRepository.buscarPorVendedor(id_vendedor);
+
+        if (notasAssociadas.length > 0) {
+            throw {
+                status: 422,
+                message: "Não é possível excluir um vendedor que possui notas fiscais."
+            };
+        }
+
+        await this.vendedorRepository.deletarVendedor(id_vendedor);
+    }
 }
+
