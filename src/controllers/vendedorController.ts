@@ -16,7 +16,7 @@ async cadastrarVendedor(req: Request, res: Response) {
 
     }catch (error: any) {
         const status = error.status ?? 500;
-        return res.status(status).json({ erro: error.mensage ?? "Erro interno do servidor."})
+        return res.status(status).json({ erro: error.message ?? "Erro interno do servidor."})
     }
 }
 
@@ -31,7 +31,7 @@ async listarVendedores(req: Request, res: Response) {
 
     } catch (error: any) {
         const status = error.status ?? 500;
-        return res.status(status).json({ erro: error.mensage ?? "Erro interno do servidor"})
+        return res.status(status).json({ erro: error.message ?? "Erro interno do servidor"})
     }
 }
 
@@ -53,7 +53,7 @@ async buscarVendedor(req: Request, res: Response) {
 
     } catch (error: any) {
         const status = error.status ?? 500;
-        return res.status(status).json({ erro: error.mensage ?? "Erro interno do servidor."});
+        return res.status(status).json({ erro: error.message ?? "Erro interno do servidor."});
     }
 } 
 
@@ -72,7 +72,7 @@ async listarNotasPorVendedor(req: Request, res: Response) {
 
     } catch (error: any) {
         const status = error.status ?? 500;
-        return res.status(status).json({ erro: error.mensage ?? "Erro interno do servidor."});
+        return res.status(status).json({ erro: error.message ?? "Erro interno do servidor."});
     }
 }
 
@@ -91,7 +91,7 @@ async atualizarVendedor(req: Request, res: Response) {
 
     } catch (error: any) {
         const status = error.status ?? 500;
-        return res.status(status).json({ erro: error.mensage ?? "Erro interno do servidor."});
+        return res.status(status).json({ erro: error.message ?? "Erro interno do servidor."});
     }
 
 }
@@ -114,7 +114,7 @@ async deletarVendedor(req: Request, res: Response) {
 
     } catch (error: any) {
         const status = error.status ?? 500;
-        return res.status(status).json({ erro: error.mensage ?? "Erro interno do servidor."})
+        return res.status(status).json({ erro: error.message ?? "Erro interno do servidor."})
     }
 }
 

@@ -18,7 +18,7 @@ async emitirNota(req: Request, res: Response){
         //se der errado, retorna status 400 e a mensagem de erro
     }catch(error: any){
         const status = error.status ?? 500;
-        return res.status(status).json({ erro: error.mensage ?? "Erro interno do servidor."});
+        return res.status(status).json({ erro: error.message ?? "Erro interno do servidor."});
     }
 }
 
@@ -32,7 +32,7 @@ async listarNotas(req: Request, res: Response){
 
     }catch(error: any){
         const status = error.status ?? 500;
-        return res.status(status).json({ erro: error.mensage ?? "Erro interno do servidor."})
+        return res.status(status).json({ erro: error.message ?? "Erro interno do servidor."})
     }
 }
 
@@ -50,7 +50,7 @@ async buscarNotaPorId(req: Request, res: Response){
 
     }catch(error: any){
         const status = error.status ?? 500;
-        return res.status(status).json({ erro: error.mensage ?? "Erro interno do servidor."});
+        return res.status(status).json({ erro: error.message ?? "Erro interno do servidor."});
 
     }
 }
@@ -68,7 +68,7 @@ async listarNotasPorCliente(req: Request, res: Response){
 
     }catch(error: any){
         const status = error.status ?? 500;
-        return res.status(status).json({ erro: error.mensage ?? "Erro interno do servidor."});
+        return res.status(status).json({ erro: error.message ?? "Erro interno do servidor."});
     }
 }
 
@@ -86,7 +86,7 @@ async listarNotasPorVendedor(req: Request, res: Response){
 
     }catch(error: any){
         const status = error.status ?? 500;
-        return res.status(status).json({ erro: error.mensage ?? "Erro interno do servidor."});
+        return res.status(status).json({ erro: error.message ?? "Erro interno do servidor."});
     }
 }
 
@@ -101,7 +101,7 @@ async deletarNota(req: Request, res: Response){
 
     }catch (error: any){
         const status = error.status ?? 422;
-        return res.status(status).json({ erro: error.mensage ?? "Erro interno do servidor."});  
+        return res.status(status).json({ erro: error.message ?? "Erro interno do servidor."});  
     }
 }
 
