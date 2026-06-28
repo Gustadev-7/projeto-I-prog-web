@@ -32,7 +32,7 @@ async listarClientes(req: Request, res: Response){
     }catch(error: any){ 
         const status = error.status ?? 500;
         //em caso de erro
-        return res.status(status).json({erro: error.mensagem ?? "Erro interno do servidor."});
+        return res.status(status).json({erro: error.message ?? "Erro interno do servidor."});
     }
 }
 
@@ -58,7 +58,7 @@ async listarClientes(req: Request, res: Response){
     async listarNotasPorCliente(req: Request, res: Response){
     try{
         //dados recebidos da requisição e converte para number
-        const id_cliente = Number(req.params.id_cliente);
+        const id_cliente = Number(req.params.id);
 
         // await aguarda o banco retornar as notas do cliente
         const notas = await this.clienteService.listarNotasPorCliente(id_cliente);
@@ -67,7 +67,7 @@ async listarClientes(req: Request, res: Response){
         return res.status(200).json(notas);
     }catch(error: any){
         const status = error.status ?? 500;
-        return res.status(status).json({ erro: error.mensagem ?? "Erro interno do servidor." });
+        return res.status(status).json({ erro: error.message ?? "Erro interno do servidor." });
     }
 }
 
@@ -75,7 +75,7 @@ async listarClientes(req: Request, res: Response){
     async atualizarCliente(req: Request, res: Response){
     try{
         //*req.params recebe o id da URL converte para number
-        const id_cliente = Number(req.params.id_cliente); 
+        const id_cliente = Number(req.params.id); 
 
         //re.body dados novos da requisição para atualizar o cliente, await aguarda o banco atualizar e retornar o cliente atualizado
         const cliente = await this.clienteService.atualizarCliente(id_cliente, req.body); 
@@ -85,7 +85,7 @@ async listarClientes(req: Request, res: Response){
 
     }catch(error: any){
         const status = error.status ?? 500;
-        return res.status(status).json({ erro: error.mensagem ?? "Erro interno do servidor." });
+        return res.status(status).json({ erro: error.message ?? "Erro interno do servidor." });
     }
 }
 
@@ -94,7 +94,7 @@ async listarClientes(req: Request, res: Response){
     async deletarCliente(req: Request, res: Response){
     try{
         //dados recebidos da requisição e converte para number 
-        const id_cliente = Number(req.params.id_cliente);
+        const id_cliente = Number(req.params.id);
 
         // await aguarda o banco deletar o cliente
         await this.clienteService.deletarCliente(id_cliente);
@@ -107,7 +107,7 @@ async listarClientes(req: Request, res: Response){
     }catch (error: any){
         // se tiver notas vinculadas o service lança { status: 422, mensagem: '...' }
         const status = error.status ?? 500;
-        return res.status(status).json({ erro: error.mensagem ?? "Erro interno do servidor." });
+        return res.status(status).json({ erro: error.message ?? "Erro interno do servidor." });
     }
 }
 
